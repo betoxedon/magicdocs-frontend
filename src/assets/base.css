@@ -1,0 +1,27 @@
+:root {
+  --color-primary: #161A30;
+  --color-secondary: #31304D;
+  --color-background: #B6BBC4;
+  --color-neutral: #F0ECE5;
+  /* assistente */
+
+  --color-ai-primary: #272829;
+  --color-ai-secondary: #61677A;
+  --color-ai-terciary: #D8D9DA;
+}
+
+html{
+  font-family: 'Rubik', sans-serif;
+  font-size: 62.5%;
+  color: var(--color-neutral)
+}
+
+body {
+  position: absolute;
+  background-color: var(--color-background);
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Rubik', sans-serif;
+}
+
