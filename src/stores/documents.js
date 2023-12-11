@@ -22,13 +22,22 @@ export const useDocumentStore = defineStore('document', ()=>{
     }
 
     async function createPad(payload = null){
-        console.log(payload)
-        await apiAuth.api.post(`/files/`,{"name": payload.name, "description": payload.description}).then(()=>{
+        await apiAuth.api.post(`/files/`,payload).then(()=>{
+            getPads()
+            closeModal()
+        }).catch((err)=> {
+            toast.warning('Verique os campos e tente novamente!')
+            return err
+        })
+    }
+
+    async function updatePad(payload = null){
+        await apiAuth.api.put(`/files/${payload.pad_id}/`, payload).then(()=>{
             getPads()
             closeModal()
         }).catch((err)=> {
             return err
         })
     }
-    return { getPads, pads, padDetail, deletePad, createPad }
+    return { getPads, pads, padDetail, deletePad, createPad, updatePad }
 })

@@ -3,28 +3,48 @@ import TitleComponent from './TitleComponent.vue';
 import inputMd from './form/inputMd.vue';
 import buttonPrimary from './form/buttonPrimary.vue';
 import TextArea from './form/TextArea.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import {useDocumentStore} from '../../stores/documents.js'
 import { closeModal } from 'jenesius-vue-modal';
+const props = defineProps({
+    value: {
+        type: Object,
+    },
+    action: {
+        type: String,
+        defaul: 'criar'
+    }
+})
+const {createPad, updatePad} = useDocumentStore()
+const padModel = ref({
+    "name": '',
+    "description": '',
+    "client": "",
+    "action": ""
 
-const {createPad} = useDocumentStore()
-const pad = ref({
-    name: '',
-    description: ''
 })
 
+const pad = ref(props.value ? props.value : padModel.value)
+
 async function Submit(){
-    await createPad(pad.value)
+    if (props.action==='criar'){
+        await createPad(pad.value)
+    } else {
+        await updatePad(pad.value)
+    }
 }
 </script>
 
 <template>
     <div class="new-pad-form">
-        <TitleComponent title="Novo Documento"></TitleComponent>
+        <TitleComponent :title="props.action==='criar' ? 'Novo Documento' : 'Atualizar Documento'"></TitleComponent>
         <font-awesome-icon class="icon" icon="times" size="xl" @click="closeModal"/>
-        <inputMd v-model="pad.name" placeholder="Ex: Receita de bolo" label="Nome do documento:"></inputMd>
-        <TextArea v-model="pad.description" placeholder="Uma breve descrição de seu documetno" label="Descrição:"></TextArea>
-        <buttonPrimary width="100%" label="Criar" @click="Submit"></buttonPrimary>
+        <inputMd v-model="pad.name" placeholder="Ex: Receita de bolo" label="Nome do documento*:"></inputMd>
+        <inputMd v-model="pad.client" placeholder="Ex: Maria José" label="Nome do cliente:"></inputMd>
+        <inputMd v-model="pad.action" placeholder="Ex: Petição inicial" label="Tipo do Documento:"></inputMd>
+        <TextArea v-model="pad.description" placeholder="Uma breve descrição de seu documetno" label="Descrição*:"></TextArea>
+        <buttonPrimary v-if="props.action==='criar'" width="100%" label="Criar" @click="Submit"></buttonPrimary>
+        <buttonPrimary v-else width="100%" label="Atualizar" @click="Submit"></buttonPrimary>
     </div>
 </template>
 
@@ -44,6 +64,7 @@ async function Submit(){
     border-radius: 3rem;
     padding: 4rem;
     position: relative;
+    width: 100%;
 }
 
 .icon {
