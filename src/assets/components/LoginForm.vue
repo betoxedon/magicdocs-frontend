@@ -23,9 +23,7 @@ import inputMd from './form/inputMd.vue';
 import buttonPrimary from './form/buttonPrimary.vue';
 import TitleComponent from './TitleComponent.vue';
 import { useToast } from 'vue-toastification';
-import { storeToRefs } from 'pinia';
 const { login } = useUserStore()
-const { user } = storeToRefs(useUserStore())
 const email = ref('')
 const password = ref('')
 const router = useRouter()
