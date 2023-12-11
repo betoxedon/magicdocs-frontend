@@ -77,6 +77,7 @@ function defineSelectedText(text){
 
 function callAction(act){
     action.value = act
+    search_bar.value.clean()
     hideMenu()
     if (act === 'pesquisar' || act === 'prompt'){
         search_bar.value.showBar()
@@ -108,7 +109,7 @@ function handleAction(){
 }
 
 const api = axios.create({
-    baseURL: 'ai/',
+    baseURL: '/ai',
     // timeout: 1000,
     headers: {'X-Custom-Header': 'foobar'},
     auth: {
