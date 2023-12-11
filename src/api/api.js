@@ -13,7 +13,7 @@ api.interceptors.request.use(async config => {
  
 const login = async (payload) => {
     return await api
-        .post('/api/token/', payload)
+        .post('/token/', payload)
         .then(
             (res)=>{
                 sessionStorage.setItem('access', res.data.access) 
@@ -29,7 +29,7 @@ const login = async (payload) => {
 
 const refresh = async () => {
     return await apiRefresh
-    .post('/api/api/token/refresh/', {"refresh": sessionStorage.getItem('refresh')})
+    .post('/token/refresh/', {"refresh": sessionStorage.getItem('refresh')})
     .then(
         (res)=>{
             sessionStorage.setItem('access', res.data.access) 

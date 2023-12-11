@@ -10,20 +10,20 @@ export const useDocumentStore = defineStore('document', ()=>{
     const padDetail = ref('')
 
     async function getPads(payload = null){
-        pads.value = await apiAuth.api.get('/api/files/', {params: {q: payload}}).then((res)=>{
+        pads.value = await apiAuth.api.get('/files/', {params: {q: payload}}).then((res)=>{
             return res.data.results
         })
     }
 
     async function deletePad(payload = null){
-        await apiAuth.api.delete(`/api/files/${payload}/`,).then(()=>{
+        await apiAuth.api.delete(`/files/${payload}/`,).then(()=>{
             return getPads()
         })
     }
 
     async function createPad(payload = null){
         console.log(payload)
-        await apiAuth.api.post(`/api/files/`,{"name": payload.name, "description": payload.description}).then(()=>{
+        await apiAuth.api.post(`/files/`,{"name": payload.name, "description": payload.description}).then(()=>{
             getPads()
             closeModal()
         }).catch((err)=> {

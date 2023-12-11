@@ -28,7 +28,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/ai/, ''),
       },
       '/api': {
-        target: 'http://127.0.0.1:8000/',
+        target: 'https://mdb.farmaciasa.crowde.dev/api/',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
