@@ -2,21 +2,39 @@
 import { RouterView, useRoute } from 'vue-router';
 import Header from './assets/components/App/Header.vue';
 import { useUserStore } from './stores/user';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import {container} from 'jenesius-vue-modal'
 const {onload, getUserData} = useUserStore()
 const route = useRoute()
+
+
+import contextMenu from './assets/components/contextMenu/contextMenu.vue';
+
+const posX = ref(0)
+const posY = ref(0)
+const ctxmenu = ref(null)
+
+function updateCoordinates(event) {
+  posX.value = event.clientX
+  posY.value = event.clientY
+}
+
 onMounted(()=>{
   onload()
   getUserData()
-  console.log('rota:')
-  console.log(route)
+
+  const app = document.getElementById('app-container')
+  app.addEventListener('mousemove', updateCoordinates)
+  app.addEventListener('mouseenter', updateCoordinates)
+  app.addEventListener('mouseleave', updateCoordinates)
+
 })
 </script>
 
 <template>
     <Header></Header>
-    <div :class="route.name=== 'PadDetail' ? 'container_pad' : 'container' ">
+    <context-menu ref="ctxmenu"></context-menu>
+    <div id="app-container" class='container' @contextmenu.prevent="$refs.ctxmenu.showMenu(posX, posY)">
       <RouterView></RouterView>
     </div>
     <container></container>
@@ -24,12 +42,10 @@ onMounted(()=>{
 <style scoped>
 
 .container {
-  max-width: 1024px;
   width: 100%;
   height: 100%;
   min-height: fit-content;
   overflow: visible;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

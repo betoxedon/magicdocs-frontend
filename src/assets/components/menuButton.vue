@@ -17,7 +17,7 @@ const emit = defineEmits(['click'])
   transition: all .2s ease-in-out;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: .5rem;
 }
 

@@ -7,7 +7,7 @@ const route = useRoute()
 <template>
 <div class="pad_container">
     <!-- <searchBar></searchBar> -->
-    <iframe :src="`https://etherpad.dev.magicdocs.com.br/p/${route.query.pad_id}`" width="100%" height="100%"></iframe>
+    <iframe :src="`https://etherpad.dev.magicdocs.com.br/p/${route.query.pad_id}`" style="max-width: 1024px;" width="100%" height="100%"></iframe>
 </div>
 </template>
 
@@ -15,5 +15,7 @@ const route = useRoute()
 .pad_container {
     width: 100%;
     height: 100%;
+    display: flex;
+    justify-content: center;
 }
 </style>

@@ -27,9 +27,14 @@ function hideBar(){
     emits('closeBar')
 }
 
+function clean(){
+    value.value = ''
+}
+
 defineExpose({
     showBar,
     hideBar,
+    clean,
 })
 </script>
 
