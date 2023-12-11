@@ -4,10 +4,11 @@ import Header from './assets/components/App/Header.vue';
 import { useUserStore } from './stores/user';
 import { onMounted } from 'vue';
 import {container} from 'jenesius-vue-modal'
-const {onload} = useUserStore()
+const {onload, getUserData} = useUserStore()
 
 onMounted(()=>{
   onload()
+  getUserData()
 })
 </script>
 

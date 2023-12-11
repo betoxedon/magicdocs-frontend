@@ -22,17 +22,21 @@ import { useUserStore } from '../../stores/user';
 import inputMd from './form/inputMd.vue';
 import buttonPrimary from './form/buttonPrimary.vue';
 import TitleComponent from './TitleComponent.vue';
-
+import { useToast } from 'vue-toastification';
+import { storeToRefs } from 'pinia';
 const { login } = useUserStore()
+const { user } = storeToRefs(useUserStore())
 const email = ref('')
 const password = ref('')
 const router = useRouter()
+const toast = useToast()
 
-function handleLogin() {
-    if (login(email.value, password.value)) {
+async function handleLogin() {
+    let res = await login(email.value, password.value)!=false
+    if (res) {
         router.push({ name: 'Home' })
     } else {
-        console.log('Seu login e senhas estão inválidos')
+        toast.warning('Usuário e/ou senha incorretos')
     }
 }
 </script>

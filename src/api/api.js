@@ -22,7 +22,7 @@ const login = async (payload) => {
                 return res.data.access
             }
         ).catch((err)=>{
-            return err
+            console.log(err)
         })
 }
 
