@@ -1,19 +1,22 @@
 <script setup>
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import Header from './assets/components/App/Header.vue';
 import { useUserStore } from './stores/user';
 import { onMounted } from 'vue';
 import {container} from 'jenesius-vue-modal'
-const {onload} = useUserStore()
-
+const {onload, getUserData} = useUserStore()
+const route = useRoute()
 onMounted(()=>{
   onload()
+  getUserData()
+  console.log('rota:')
+  console.log(route)
 })
 </script>
 
 <template>
     <Header></Header>
-    <div class="container">
+    <div :class="route.name=== 'PadDetail' ? 'container_pad' : 'container' ">
       <RouterView></RouterView>
     </div>
     <container></container>
@@ -27,7 +30,20 @@ onMounted(()=>{
   min-height: fit-content;
   overflow: visible;
   margin: 0 auto;
-  margin-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
+}
+.container_pad {
+  /* max-width: 1024px; */
+  width: 100%;
+  height: 100%;
+  min-height: fit-content;
+  overflow: visible;
+  margin: 0 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

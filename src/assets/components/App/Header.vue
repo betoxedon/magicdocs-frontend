@@ -79,7 +79,7 @@ function handleNavigation(route){
 
         <ul v-else class="menu-links">
           <li>
-            <span>Bem vindo, {{ user.first_name }}</span>
+            <span>Olá, {{ user.first_name }}</span>
           </li>
           <li  class="link">
             <img v-if="user.profile_picture" class="profile_picture" :src="user.profile_picture" alt="">

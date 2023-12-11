@@ -7,12 +7,10 @@ import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 const router = useRouter()
 
-const {padDetail} = storeToRefs(useDocumentStore())
 const { deletePad } = useDocumentStore()
 
 function handleDetail(id){
-    padDetail.value = id
-    router.push({name: 'PadDetail'})
+    router.push({name: 'PadDetail', query: {pad_id: id}})
 }
 </script>
 

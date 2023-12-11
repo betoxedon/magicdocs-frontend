@@ -7,18 +7,22 @@ import buttonPrimary from '../components/form/buttonPrimary.vue';
 import { useRouter } from 'vue-router';
 import { openModal } from 'jenesius-vue-modal';
 import newPadForm from '../components/newPadForm.vue';
+import menuButton from '../components/menuButton.vue';
 const router = useRouter()
 
-const {pads, padDetail} = storeToRefs(useDocumentStore())
+const {pads} = storeToRefs(useDocumentStore())
 const {getPads, deletePad} = useDocumentStore()
-const tableVisualization = ref(false)
+const tableVisualization = ref(true)
 
 function handleDetail(id){
-    padDetail.value = id
-    router.push({name: 'PadDetail'})
+    router.push({name: 'PadDetail', query: {pad_id: id}})
 }
 
 const q = ref()
+
+function updatePad(pad){
+  openModal(newPadForm, {value: pad, action: 'atualizar'})
+}
 
 onMounted(()=> {
   getPads()
@@ -29,10 +33,7 @@ onMounted(()=> {
 <template>
   <div class="card-container">
     <div class="header">
-      <font-awesome-icon class="menu-item" icon="plus" size="xl" @click="openModal(newPadForm)"/>
-      <font-awesome-icon class="menu-item" icon="table-list" @click="tableVisualization=true" size="xl" />
-      <font-awesome-icon class="menu-item" icon="file" @click="tableVisualization=false" size="xl" />
-      <!-- <font-awesome-icon class="menu-item" icon="trash-can" size="xl" /> -->
+      <menuButton icon="plus" label="Novo" @click.capture="openModal(newPadForm, {action: 'criar'})"></menuButton>
       <div class="search-bar">
         <input type="search" @input="getPads(q)" v-model="q" placeholder="Pesquisar" @keyup.enter="getPads(q)">
         <font-awesome-icon class="menu-item" icon="magnifying-glass" size="xl" @click="getPads(q)"/>
@@ -49,13 +50,14 @@ onMounted(()=> {
           <th>Ação</th>
           <th>Descrição</th>
         </tr>
-        <tr v-for="(document, index) in pads" :key="index">
-          <td>{{document.name}}</td>
+        <tr v-for="(document, index) in pads" :key="index" >
+          <td>{{document.name}} </td>
+          <td>{{document.client}}</td>
+          <td>{{document.action}}</td>
           <td>{{document.description}}</td>
-          <td>{{document.description}}</td>
-          <td>{{document.description}}</td>
-          <td><buttonPrimary width="100%" label="Abrir" @click=handleDetail(document.pad_id)></buttonPrimary></td>
-          <td><buttonPrimary width="100%" label="Apagar" @click=deletePad(document.pad_id)></buttonPrimary></td>
+          <td><buttonPrimary width="100%" label="" icon="folder-open" @click="handleDetail(document.pad_id)"></buttonPrimary></td>
+          <td><buttonPrimary width="100%" label="" icon="pen-to-square" @click="updatePad({...document})"></buttonPrimary></td>
+          <td><buttonPrimary width="100%" label="" icon="trash" @click="deletePad(document.pad_id)"></buttonPrimary></td>
         </tr>
       </table>
     </div>
@@ -84,20 +86,9 @@ onMounted(()=> {
   gap: 1rem;
 }
 
-.menu-item {
-  border-radius: 50%;
-  padding: 1rem;
-  transition: all .2s ease-in-out;
-  cursor: pointer;
-}
-
-.menu-item:hover {
-  background-color: var(--color-background);
-
-}
-
 .search-bar {
   display: flex;
+  position: relative;
   width: 100%;
 }
 
@@ -109,9 +100,15 @@ onMounted(()=> {
   padding: 0 2rem;
 }
 
+.menu-item {
+  cursor: pointer;
+}
+
 .search-bar .menu-item {
   position: absolute;
-  right: 5rem;
+  top: calc((100% - 21px) / 2);
+  right: 1rem;
+
 }
 
 .document-container {

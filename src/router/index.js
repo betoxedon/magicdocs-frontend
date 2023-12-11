@@ -30,7 +30,7 @@ const router = createRouter({
       component: DocumenView
     },
     {
-      path: '/pad',
+      path: '/pad/',
       name: 'PadDetail',
       component: PadDetail
     }

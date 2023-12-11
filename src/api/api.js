@@ -4,7 +4,9 @@ const api = axios.create()
 const apiRefresh = axios.create()
 
 api.interceptors.request.use(async config => {
-    refresh()
+    if (parseInt(sessionStorage.getItem('expiration')) < Date.now()){
+        refresh()
+    } 
     const access = sessionStorage.getItem('access')
     config.baseURL = `/api`
     config.headers.Authorization = access ? `Bearer ${access}` : ''
@@ -22,14 +24,14 @@ const login = async (payload) => {
                 return res.data.access
             }
         ).catch((err)=>{
-            return err
+            console.log(err)
         })
 }
 
 
 const refresh = async () => {
     return await apiRefresh
-    .post('/token/refresh/', {"refresh": sessionStorage.getItem('refresh')})
+    .post('/api/token/refresh/', {"refresh": sessionStorage.getItem('refresh')})
     .then(
         (res)=>{
             sessionStorage.setItem('access', res.data.access) 

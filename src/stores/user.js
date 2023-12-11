@@ -6,12 +6,13 @@ import { useToast } from "vue-toastification";
 const toast = useToast()
 
 export const useUserStore = defineStore('user', ()=>{
-    const token = ref('')
+    const token = ref(null)
     const user = ref(null)
 
     async function login(email, password){
         token.value = await apiAuth.login({"email":email, "password":password})
-        if (token.value) {
+        console.log(token.value)
+        if (token.value != null) {
             user.value = getUserData()
             return true
         }
@@ -57,5 +58,5 @@ export const useUserStore = defineStore('user', ()=>{
         return res
     }
 
-    return { login, user, onload, logout, register }
+    return { login, user, onload, logout, register, getUserData }
 })
