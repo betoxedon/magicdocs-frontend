@@ -5,6 +5,7 @@ import buttonPrimary from './form/buttonPrimary.vue';
 import TextArea from './form/TextArea.vue';
 import { ref } from 'vue';
 import {useDocumentStore} from '../../stores/documents.js'
+import { closeModal } from 'jenesius-vue-modal';
 
 const {createPad} = useDocumentStore()
 const pad = ref({
@@ -20,6 +21,7 @@ async function Submit(){
 <template>
     <div class="new-pad-form">
         <TitleComponent title="Novo Documento"></TitleComponent>
+        <font-awesome-icon class="icon" icon="times" size="xl" @click="closeModal"/>
         <inputMd v-model="pad.name" placeholder="Ex: Receita de bolo" label="Nome do documento:"></inputMd>
         <TextArea v-model="pad.description" placeholder="Uma breve descrição de seu documetno" label="Descrição:"></TextArea>
         <buttonPrimary width="100%" label="Criar" @click="Submit"></buttonPrimary>
@@ -41,6 +43,14 @@ async function Submit(){
     -moz-border-radius: 3rem;
     border-radius: 3rem;
     padding: 4rem;
+    position: relative;
+}
+
+.icon {
+    position: absolute;
+    right: 4rem;
+    top: 4rem;
+    cursor: pointer;
 }
 
 </style>

@@ -7,6 +7,7 @@ import buttonPrimary from '../components/form/buttonPrimary.vue';
 import { useRouter } from 'vue-router';
 import { openModal } from 'jenesius-vue-modal';
 import newPadForm from '../components/newPadForm.vue';
+import menuButton from '../components/menuButton.vue';
 const router = useRouter()
 
 const {pads, padDetail} = storeToRefs(useDocumentStore())
@@ -14,8 +15,7 @@ const {getPads, deletePad} = useDocumentStore()
 const tableVisualization = ref(false)
 
 function handleDetail(id){
-    padDetail.value = id
-    router.push({name: 'PadDetail'})
+    router.push({name: 'PadDetail', query: {pad_id: id}})
 }
 
 const q = ref()
@@ -29,10 +29,9 @@ onMounted(()=> {
 <template>
   <div class="card-container">
     <div class="header">
-      <font-awesome-icon class="menu-item" icon="plus" size="xl" @click="openModal(newPadForm)"/>
-      <font-awesome-icon class="menu-item" icon="table-list" @click="tableVisualization=true" size="xl" />
-      <font-awesome-icon class="menu-item" icon="file" @click="tableVisualization=false" size="xl" />
-      <!-- <font-awesome-icon class="menu-item" icon="trash-can" size="xl" /> -->
+      <menuButton icon="plus" label="Novo" @click.capture="openModal(newPadForm)"></menuButton>
+      <menuButton icon="list" label="Lista" @click.capture="tableVisualization=true"></menuButton>
+      <menuButton icon="file" label="Cards" @click.capture="tableVisualization=false"></menuButton>
       <div class="search-bar">
         <input type="search" @input="getPads(q)" v-model="q" placeholder="Pesquisar" @keyup.enter="getPads(q)">
         <font-awesome-icon class="menu-item" icon="magnifying-glass" size="xl" @click="getPads(q)"/>
@@ -84,20 +83,9 @@ onMounted(()=> {
   gap: 1rem;
 }
 
-.menu-item {
-  border-radius: 50%;
-  padding: 1rem;
-  transition: all .2s ease-in-out;
-  cursor: pointer;
-}
-
-.menu-item:hover {
-  background-color: var(--color-background);
-
-}
-
 .search-bar {
   display: flex;
+  position: relative;
   width: 100%;
 }
 
@@ -111,7 +99,9 @@ onMounted(()=> {
 
 .search-bar .menu-item {
   position: absolute;
-  right: 5rem;
+  top: calc((100% - 21px) / 2);
+  right: 1rem;
+  cursor: pointer;
 }
 
 .document-container {
