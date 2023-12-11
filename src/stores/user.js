@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', ()=>{
 
     
     async function getUserData(){
-        user.value = await apiAuth.api.get('/api/users/').then((res)=>{
+        user.value = await apiAuth.api.get('/users/').then((res)=>{
             sessionStorage.setItem('user', JSON.stringify(res.data.results[0]))
             return res.data.results[0]
         })
@@ -43,7 +43,7 @@ export const useUserStore = defineStore('user', ()=>{
     }
 
     async function register(payload){
-        let res = await apiAuth.api.post('/api/users/', payload)
+        let res = await apiAuth.api.post('/users/', payload)
         .then((res)=>{
             if (res.status===201){
                 toast.success("Usuário criado com sucesso!")
