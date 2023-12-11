@@ -1,34 +1,61 @@
 import { defineStore } from "pinia";
-import Api from '../api/api.js'
+import apiAuth from '../api/api.js'
 import {ref} from 'vue'
+import { useToast } from "vue-toastification";
 
-const api = new Api()
+const toast = useToast()
 
 export const useUserStore = defineStore('user', ()=>{
     const token = ref('')
-    const refresh = ref('')
-    const user = ref(true)
+    const user = ref(null)
 
     async function login(email, password){
-        let response = await api.login(email, password)
-        if (response) {
+        token.value = await apiAuth.login({"email":email, "password":password})
+        if (token.value) {
             user.value = getUserData()
             return true
         }
         return false
     }
 
-    function verifyToken(){
-        let expiration = sessionStorage.getItem('expiration')
-        if (expiration < Date.now()){
-            token.value = api.refresh()
+    
+    async function getUserData(){
+        user.value = await apiAuth.api.get('/api/users/').then((res)=>{
+            sessionStorage.setItem('user', JSON.stringify(res.data.results[0]))
+            return res.data.results[0]
+        })
+    }
+
+    function onload() {
+        try {
+           user.value = JSON.parse(sessionStorage.getItem('user'))
+        } catch (error) {
+            console.log(error)
         }
     }
 
-    function getUserData(){
-        verifyToken()
-        return "ok"
+    function logout(){
+        user.value = null
+        sessionStorage.removeItem("refresh");
+        sessionStorage.removeItem("expiration");
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("access");
     }
 
-    return { login, token, refresh, user }
+    async function register(payload){
+        let res = await apiAuth.api.post('/api/users/', payload)
+        .then((res)=>{
+            if (res.status===201){
+                toast.success("Usuário criado com sucesso!")
+                return true
+            }
+        }).catch((err)=>{
+            toast.error(Object.values(err.response.data)[0][0])
+            return false
+        })
+        console.log(res)
+        return res
+    }
+
+    return { login, user, onload, logout, register }
 })

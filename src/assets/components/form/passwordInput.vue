@@ -51,7 +51,7 @@ function showPassword(){
     </div>
 </template>
 
-<style setup>
+<style scoped>
     .input-group {
         position: relative;
         display: flex;

@@ -26,28 +26,44 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'check'])
 
+const showPassword = ref(false)
+const type = ref(props.type)
 const value = computed({
   get() {
     return props.modelValue
   },
   set(value) {
     emit('update:modelValue', value)
+    emit('check', value)
   }
 })
 
 const id = ref(`input_${props.id}`)
+
+function handleShowPassword(){
+    showPassword.value = !showPassword.value
+    if (type.value === 'password') {
+        type.value = 'text'
+    } else {
+        type.value = 'password'
+    }
+}
 </script>
+
 <template>
     <div class="input-group">
         <label :for="id">{{ props.label }}</label>
-        <input :type="props.type" :id="id" :placeholder="props.placeholder" v-model="value">
+        <input :type="type" :id="id" :placeholder="props.placeholder" v-model="value">
         <font-awesome-icon v-if="props.icon" class="icon" :icon="props.icon" />
+        <font-awesome-icon v-if="props.type === 'password' && !showPassword" class="icon-eye" icon="eye" @click="handleShowPassword" />
+        <font-awesome-icon v-if="props.type === 'password' && showPassword" class="icon-eye" icon="eye-slash" @click="handleShowPassword"/>
+        <slot name="bottom-slots"></slot>
     </div>
 </template>
 
-<style setup>
+<style scoped>
     .input-group {
         position: relative;
         display: flex;
@@ -55,30 +71,40 @@ const id = ref(`input_${props.id}`)
         align-items: flex-start;
         margin-bottom: 1rem;
         width: 100%;
+        min-width: 15rem;
+        height: fit-content;
     }
 
     .input-group input {
         box-sizing: border-box;
-        padding: .2rem .5rem;
+        padding: 1rem 1rem;
         outline: none;
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
         border: none;
-        min-width: 300px;
         width: 100%;
-        height: 2rem;
+        height: 4rem;
+        background-color: var(--color-neutral);
     }
 
     .input-group label {
-        font-size: .9rem;
+        font-size: 1.5rem;
         margin-bottom: .5rem;
     }
 
-    .input-group .icon {
+    .icon, .icon-eye {
         position: absolute;
+        height: 20px;
+        width: 20px;
         right: 10px;
-        bottom: 8px;
+        top: 3.75rem;
+        color: var(--color-primary);
+    }
+
+    .icon-eye {
+        right: 4rem;
+        top: 3.75rem;
         color: var(--color-primary);
     }
 </style>

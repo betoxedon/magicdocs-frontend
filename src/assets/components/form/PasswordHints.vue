@@ -22,7 +22,8 @@ const props = defineProps({
 <style scoped>
     span {
         font-weight: 300;
-        font-size: .8rem;
+        font-size: 1.1rem;
+        margin-bottom: .1rem;
     }
     .error {
         color: red;

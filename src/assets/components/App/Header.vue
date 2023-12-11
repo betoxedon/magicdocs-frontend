@@ -1,149 +1,230 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import {useRouter, useRoute} from 'vue-router'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '../../../stores/user';
+import buttonPrimary from '../form/buttonPrimary.vue';
+const props = defineProps(['color'])
+const dropdown_menu = ref(null)
+const dropdown_menu_container = ref(null)
+
+const { logout } = useUserStore()
+const { user } = storeToRefs(useUserStore())
 const router = useRouter()
-const route = useRoute()
-const menu = ref(null)
-const menuShown = ref(false)
-onMounted(()=>{
-    menu.value = document.getElementById('menu')
+const wd = ref(null)
+const dropdownIsVisible = ref(false)
+
+onMounted(() => {
+  wd.value = window
+  document.addEventListener('click', (e)=>{handleOutside(e)})
 })
 
+function getEventTarget(e){
+  return e
+}
+
+function handleOutside(event){
+  let e = getEventTarget(event)
+  if (e.target.contains(dropdown_menu_container.value)) {
+    closeMenu()
+  }
+}
+
+function handleLogout() {
+  logout()
+  router.push({ name: 'Home' })
+}
+
+function openMenu() {
+  dropdown_menu.value.style.visibility = 'visible'
+  dropdownIsVisible.value = true
+}
+
+function closeMenu() {
+  dropdown_menu.value.style.visibility = 'hidden'
+  dropdownIsVisible.value = false
+}
+
 function handleMenu(){
-    menuShown.value = !menuShown.value
-    if (menuShown.value) {
-        menu.value.style.top = `50px`
-    } else {
-        menu.value.style.top = `-${menu.value.clientHeight}px`
-    }
+  if (dropdownIsVisible.value) {
+    closeMenu()
+  } else {
+    openMenu()
+  }
+}
+
+function handleNavigation(route){
+  closeMenu()
+  router.push({name: route})
 }
 </script>
 
 <template>
-<nav class="navbar">
-    <div class="container">
-        <span style="font-weight: 500; align-self: center;">MAGICDOCS</span>
-        <div class="links">
-            <span @click="router.push({name: 'Home'})">Home</span>
-            <span @click="router.push({name: 'Home'})">Quem somos</span>
-            <span @click="router.push({name: 'Home'})">Preços</span>
-            <span @click="router.push({name: 'MyDocuments'})">Meus Documentos</span>
-        </div>
-        <div class="user">
-            <span @click="router.push('/login')">Login</span>
-            <font-awesome-icon icon="bars" size="xl" class="menu-icon" style="margin-left: 2rem;" @click="handleMenu"/>
-        </div>
+  <header class="header" :style="{ 'background-color': props.color }">
+    <nav class="navigation-bar">
+      <!-- LOGO / NAME -->
+      <a class="link logo" href="#" @click="router.push({ name: 'Home' })">MagicDocs</a>
+      <!-- NAVIGATION LINKS -->
+      <div class="menu">
+        <ul class="menu-links">
+          <li><a class="link" href="#" @click="router.push({ name: 'Home' })">Home</a></li>
+          <li v-if="user"><a class="link" href="#" @click="router.push({ name: 'Documents' })">Meus Documentos</a></li>
+        </ul>
 
-    </div>
-</nav>
-<div class="menu" id="menu">
-        <span @click="router.push('/login')" :class="[route.name==='Login' ? 'active' : '']">Login</span>
-        <span @click="router.push({name: 'Home'})" :class="[route.name==='Home' ? 'active' : '']">Home</span>
-        <span @click="router.push({name: 'Home'})">Quem somos</span>
-        <span @click="router.push({name: 'Home'})">Preços</span>
-    </div>
+        <ul v-if="!user" class="menu-links">
+          <li >
+            <buttonPrimary label="Login" icon="right-to-bracket" @click="router.push({ name: 'Login' })"></buttonPrimary>
+          </li>
+        </ul>
+
+        <ul v-else class="menu-links">
+          <li>
+            <span>Bem vindo, {{ user.first_name }}</span>
+          </li>
+          <li  class="link">
+            <img v-if="user.profile_picture" class="profile_picture" :src="user.profile_picture" alt="">
+            <img v-else class="profile_picture" src="../../../images/avatar.jpg" alt="">
+          </li>
+          <li><a class="link" href="#" @click="handleLogout">
+              Logout
+              <font-awesome-icon icon="right-from-bracket" />
+            </a></li>
+        </ul>
+      </div>
+
+
+      <!-- DROPDOWN MENU -->
+      <div class="dropdown_menu" id="#dropdown_menu" ref="dropdown_menu_container">
+        <font-awesome-icon class="dropdown-icon" icon="bars" size="xl" @click="handleMenu" />
+        <div ref="dropdown_menu" class="dropdown">
+          <ul class="menu-links-dropdown">
+            <li><a class="link" href="#" @click="handleNavigation('Home')">Home</a></li>
+            <li><a class="link" href="#" @click="handleNavigation('Home')">Documents</a></li>
+            <li v-if="!user"><a class="link" href="#" @click="handleNavigation('Login')">
+                Login
+                <font-awesome-icon icon="right-to-bracket" />
+              </a></li>
+            <li v-else><a class="link" href="#" @click="logout">
+                Logout
+                <font-awesome-icon icon="right-from-bracket" />
+              </a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
 </template>
 
 
 <style scoped>
-
-.active {
-    text-decoration: underline;
-}
-.navbar {
-    font-family: 'Rubik';
-    font-size: .8rem;
-    font-weight: 500;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 50px;
-    height: 50px;
-    background-color: var(--color-primary);
-    color: var(--color-neutral);
-    gap: 1rem;
-    z-index: 9999;
+header {
+  width: 100%;
+  height: 5rem;
+  margin-bottom: 3rem;
 }
 
-.container {
-    max-width: 1080px;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    z-index: 9999;
+.logo {
+  font-weight: 700;
+  font-size: 2rem;
 }
 
-.navbar span {
-    cursor: pointer;
-    font-size: .9rem;
-    font-weight: 3;
-    height: fit-content;
-}
-
-.menu-icon {
-    display: none;
-}
-
-.links  {
-
-    gap: 1rem;
-
-}
-
-.links, .user {
-    display: flex;
-    align-items: center;
+.link {
+  text-decoration: none;
+  font-size: 1.5rem;
+  color: var(--color-ai-primary);
 }
 
 .menu {
-    font-family: 'Rubik';
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    background-color: var(--color-neutral);
-    color: var(--color-primary);
-    width: fit-content;
-    min-width: 100vw;
-    top: 50px;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.navigation-bar {
+  max-width: 1024px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
+}
+
+.menu-links {
+  display: flex;
+  align-items: center;
+}
+
+.menu-links li {
+  padding-left: 2rem;
+  font-weight: 500;
+}
+
+.dropdown {
+  position: absolute;
+  right: 2rem;
+  top: 7rem;
+  padding: 2rem;
+  visibility: hidden;
+  background-color: var(--color-ai-terciary);
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.dropdown-icon {
+  display: none;
+}
+
+.menu-links-dropdown {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 15rem;
+}
+
+.menu-links-dropdown li {
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+}
+
+.menu-links-dropdown ul:last-child {
+  margin-bottom: 0;
+}
+
+.dropdown_menu {
+  display: none;
+}
+
+.profile_picture {
+  height: 4rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid var(--color-ai-primary);
+}
+
+@media screen and (min-width: 1024px) {}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {}
+
+@media screen and (max-width: 767px) {
+  .dropdown_menu {
+    display: block;
+  }
+
+  .dropdown {
+    width: 100%;
     right: 0;
-    z-index: 900;
-    transition: all .5s ease-in-out;
-    display: none;
-}
-.menu span {
-    padding: 1rem 1rem 1rem 1rem;
-    font-weight: 500;
-}
-.menu span:hover {
-    color: var(--color-neutral);
-    background-color: var(--color-primary);
-    font-weight: 500;
-}
+    z-index: 1000;
+  }
 
-@media screen and (max-width: 1200px) {
-    .container {
-        margin: 0 3rem;
-    }
-}
+  .menu-links {
+    visibility: hidden;
+  }
 
-@media screen and (max-width: 760px) {
-    .links {
-        display: none;
-    }
-    .user span {
-        display: none;
-    }
-    .menu {
-        display: flex;
-    }
-    .menu-icon {
-        display: block;
-    }
-    .active{
-        background-color: var(--color-secondary);
-        color: var(--color-neutral);
-    }
+  .dropdown-icon {
+    display: block;
+  }
 }
 </style>

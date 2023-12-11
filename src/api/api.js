@@ -1,74 +1,47 @@
 import axios from "axios";
 
 const api = axios.create()
+const apiRefresh = axios.create()
 
-
-class Api {
-    constructor() {
-        this.api = axios.create()
-    }
-    async login(email, password){
-        let body = {
-            "email":email, 
-            "password":password
-        }
-        return await api.post('/api/token/', body)
-        .then( res=> {
-            if (res.status === 200){
-                sessionStorage.setItem('expiration', Date.now() + 270000)
-                sessionStorage.setItem('email', email)
-                sessionStorage.setItem('refresh', res.data.refresh)
-                this.api.interceptors.use(async config => {
-                    config.headers.Authorization = `Bearer ${res.data.access}`
-                    return config
-                })
-                return true
+api.interceptors.request.use(async config => {
+    refresh()
+    const access = sessionStorage.getItem('access')
+    config.baseURL = `/api`
+    config.headers.Authorization = access ? `Bearer ${access}` : ''
+    return config
+})
+ 
+const login = async (payload) => {
+    return await api
+        .post('/api/token/', payload)
+        .then(
+            (res)=>{
+                sessionStorage.setItem('access', res.data.access) 
+                sessionStorage.setItem('refresh', res.data.refresh) 
+                sessionStorage.setItem('expiration', Date.now() + 4*60*1000) 
+                return res.data.access
             }
-            return false
-        })
-        .catch((err) => {
+        ).catch((err)=>{
             return err
         })
-    }
-
-    async refresh(){
-        let refreshToken = sessionStorage.getItem('refresh')
-        let body = {
-            "refresh": refreshToken
-        }
-        return await api.post('/api/token/refresh/', body)
-        .then( res=> {
-            if (res.status === 200){
-                let token = res.data.access
-                this.api.interceptors.use(async config => {
-                    config.headers.Authorization = `Bearer ${token}`
-                    return config
-                })
-            }
-            return false
-        })
-        .catch((err) => {
-            return err
-        })
-    }
-
-    async getUser(){
-        let body = {
-            'email': sessionStorage.getItem('refresh')
-        }
-        return await api.post('/api/token/refresh/', body)
-        .then( res=> {
-            if (res.status === 200){
-                let token = res.data.access
-                sessionStorage.setItem('token', token)
-                return token
-            }
-            return false
-        })
-        .catch((err) => {
-            return err
-        })
-    }
 }
 
-export default Api
+
+const refresh = async () => {
+    return await apiRefresh
+    .post('/api/api/token/refresh/', {"refresh": sessionStorage.getItem('refresh')})
+    .then(
+        (res)=>{
+            sessionStorage.setItem('access', res.data.access) 
+            sessionStorage.setItem('expiration', Date.now() + 4*60*1000) 
+            return res.data.access
+        }
+    ).catch((err)=>{
+        return err
+    })
+}
+
+export default {
+    login: login,
+    api: api
+}

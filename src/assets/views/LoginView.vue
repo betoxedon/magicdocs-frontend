@@ -1,69 +1,42 @@
 <script setup>
-import { ref } from 'vue';
-import {useRouter} from 'vue-router'
-import inputMd from '../components/form/inputMd.vue';
-import buttonMd from '../components/form/buttonMd.vue';
-import passwordInput from '../components/form/passwordInput.vue'
-import { useUserStore } from '../../stores/user';
-const {login} = useUserStore()
-const email = ref('')
-const password = ref('')
-const router = useRouter()
-
-function handleLogin(){
-    if (login(email.value, password.value)){
-        router.push({name: 'Home'})
-    } else {
-        console.log('Seu login e senhas estão inválidos')
-    }
-}
-
+import loginForm from '../components/loginForm.vue';
 </script>
 
 <template>
-    <form class="login-form">
-        <h3 style="font-size: 1.8rem;">MagicDocs</h3>
-        <span style="font-size: 1rem; font-weight: 300; ">Seja bem vindo(a)!</span>
-        <inputMd v-model="email" label="Email" placeholder="email@email.com" id="login_email" icon="at"></inputMd>
-        <passwordInput v-model="password" label="Senha" placeholder="Digite sua senha" id="login_senha" icon="lock"></passwordInput>
-        <buttonMd label="Entrar" @click="handleLogin"></buttonMd>
-        <div class="separador"></div>
-        <h3 style="font-size: 1.8rem; margin-top: 2rem;">Novo por aqui?</h3>
-        <buttonMd label="Cadastrar" @click="router.push({name: 'Register'})"></buttonMd>
-    </form>
+    <div class="form-container">
+        <loginForm></loginForm>
+    </div>
 </template>
 
 <style scoped>
-
-    .login-form {
-        height: fit-content;
-        width: 40rem;
-        padding: 3rem 3rem;
-        box-sizing: border-box;
-        border-radius: 10px;
-        background-color: var(--color-secondary);
-        font-family: 'Rubik';
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .login-form h3 {
-        margin-bottom: 2rem;
-    }
-    .login-form span {
-        margin: 1.5rem 0;
-    }
-
-    .separador {
-        width: 100%;
-        height: 1px;
-        background-color: var(--color-neutral);
-    }
-@media screen and (max-width: 760px) {
-    .login-form {
-        width: fit-content;
-    }
-    
+.form-container {
+    box-sizing: border-box;
+    padding: 1rem;
+    width: 100%;
+    background-color: white;
+    height: fit-content;
+    -webkit-border-radius: 2rem;
+    -moz-border-radius: 2rem;
+    border-radius: 2rem;
+    transition: all 1s ease-in-out;
+    display: flex;
 }
+
+
+.form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all .5s ease-in-out;
+}
+
+.form img {
+    transition: all 1s ease-in-out;
+}
+
+@media screen and (min-width: 1024px) {}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {}
+
+@media screen and (max-width: 767px) {}
 </style>

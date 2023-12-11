@@ -1,73 +1,43 @@
 <script setup>
-import { onMounted, ref } from 'vue';
 import { RouterView } from 'vue-router';
-import { useUserStore } from './stores/user';
-import {storeToRefs} from 'pinia'
 import Header from './assets/components/App/Header.vue';
-import contextMenu from './assets/components/contextMenu/contextMenu.vue';
-import Footer from './assets/components/App/Footer.vue';
-import botBallonVue from './assets/components/contextMenu/botBallon.vue';
-const posX = ref(0)
-const posY = ref(0)
-const ctxmenu = ref(null)
-const {token, user} = storeToRefs(useUserStore())
+import { useUserStore } from './stores/user';
+import { onMounted } from 'vue';
+const {onload} = useUserStore()
 
-
-function updateCoordinates(event) {
-  posX.value = event.clientX
-  posY.value = event.clientY
-}
 onMounted(()=>{
-  const app = document.getElementById('app-container')
-  app.addEventListener('mousemove', updateCoordinates)
-  app.addEventListener('mouseenter', updateCoordinates)
-  app.addEventListener('mouseleave', updateCoordinates)
+  onload()
 })
 </script>
 
 <template>
-  <div id="app-container" v-if="user" @contextmenu.prevent="$refs.ctxmenu.showMenu(posX, posY)" >
-    <context-menu ref="ctxmenu"></context-menu>
     <Header></Header>
     <div class="container">
       <RouterView></RouterView>
     </div>
-    <!-- <Footer></Footer> -->
-  </div>
-  <div id="app-container" v-else>
-    <context-menu ref="ctxmenu"></context-menu>
-    <Header></Header>
-    <div class="container">
-      <RouterView></RouterView>
-    </div>
-    <!-- <Footer></Footer> -->
-  </div>
 </template>
-
 <style scoped>
-.container {
-  display: flex;
-  height: calc(100% - 50px);
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 2rem;
-  box-sizing: border-box;
-}
 
-#app-container {
+.container {
+  max-width: 1024px;
   width: 100%;
   height: 100%;
-  position: relative;
+  min-height: fit-content;
+  overflow: visible;
+  margin: 0 auto;
+  margin-bottom: 5rem;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: none;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
 }
-@media screen and (max-width: 760px) {
-  .container {
-    padding: 0 2rem;
-  }
-  
-}
+
+@media screen and (min-width: 1024px) {}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {}
+
+@media screen and (max-width: 767px) {}
+
 </style>
