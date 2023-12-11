@@ -3,6 +3,7 @@ import { RouterView } from 'vue-router';
 import Header from './assets/components/App/Header.vue';
 import { useUserStore } from './stores/user';
 import { onMounted } from 'vue';
+import {container} from 'jenesius-vue-modal'
 const {onload} = useUserStore()
 
 onMounted(()=>{
@@ -15,6 +16,7 @@ onMounted(()=>{
     <div class="container">
       <RouterView></RouterView>
     </div>
+    <container></container>
 </template>
 <style scoped>
 

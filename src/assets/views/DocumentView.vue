@@ -5,7 +5,8 @@ import { storeToRefs } from 'pinia';
 import cardDocument from '../components/cardDocument.vue';
 import buttonPrimary from '../components/form/buttonPrimary.vue';
 import { useRouter } from 'vue-router';
-
+import { openModal } from 'jenesius-vue-modal';
+import newPadForm from '../components/newPadForm.vue';
 const router = useRouter()
 
 const {pads, padDetail} = storeToRefs(useDocumentStore())
@@ -28,7 +29,7 @@ onMounted(()=> {
 <template>
   <div class="card-container">
     <div class="header">
-      <font-awesome-icon class="menu-item" icon="plus" size="xl" />
+      <font-awesome-icon class="menu-item" icon="plus" size="xl" @click="openModal(newPadForm)"/>
       <font-awesome-icon class="menu-item" icon="table-list" @click="tableVisualization=true" size="xl" />
       <font-awesome-icon class="menu-item" icon="file" @click="tableVisualization=false" size="xl" />
       <!-- <font-awesome-icon class="menu-item" icon="trash-can" size="xl" /> -->
