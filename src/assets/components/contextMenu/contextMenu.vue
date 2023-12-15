@@ -113,8 +113,8 @@ const api = axios.create({
     // timeout: 1000,
     headers: {'X-Custom-Header': 'foobar'},
     auth: {
-    username: 'api_user',
-    password: 'N6V2AKsBa76!qHWARZi*Ha&wMbxSox'
+    username: process.env.API_CHATBOT_USERNAME,
+    password: process.env.API_CHATBOT_PASSWORD
   },
 })
 

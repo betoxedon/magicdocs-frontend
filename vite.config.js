@@ -2,6 +2,8 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import 'dotenv/config'
+
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,13 +19,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/ai': {
-        target: 'http://191.7.141.15:8600',
+        target: process.env.API_CHATBOT,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ai/, ''),
       },
       '/api': {
-        // target: 'http://127.0.0.1:8000/api/',
-        target: 'https://mdb.farmaciasa.crowde.dev/api/',
+        target: process.env.API,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
