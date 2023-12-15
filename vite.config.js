@@ -17,7 +17,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/ai': {
-        target: 'https://3202-167-249-205-202.ngrok-free.app/',
+        target: 'http://191.7.141.15:8600',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ai/, ''),
       },
