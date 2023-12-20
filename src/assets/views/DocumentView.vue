@@ -55,7 +55,7 @@ onMounted(()=> {
           <td>{{document.client}}</td>
           <td>{{document.action}}</td>
           <td>{{document.description}}</td>
-          <td><buttonPrimary width="100%" label="" icon="folder-open" @click="handleDetail(document.pad_id)"></buttonPrimary></td>
+          <td><buttonPrimary width="100%" label="" icon="arrow-up-right-from-square" @click="handleDetail(document.pad_id)"></buttonPrimary></td>
           <td><buttonPrimary width="100%" label="" icon="pen-to-square" @click="updatePad({...document})"></buttonPrimary></td>
           <td><buttonPrimary width="100%" label="" icon="trash" @click="deletePad(document.pad_id)"></buttonPrimary></td>
         </tr>
