@@ -6,6 +6,9 @@ import { onMounted,} from 'vue';
 import {container} from 'jenesius-vue-modal'
 import botBubble from './assets/components/Bot/BotBubble.vue'
 const {onload, getUserData} = useUserStore()
+import { storeToRefs } from 'pinia';
+
+const {user} = storeToRefs(useUserStore())
 
 onMounted(()=>{
   onload()
@@ -19,7 +22,7 @@ onMounted(()=>{
     <div  class='container'>
       <RouterView style="max-width: 1024px;"></RouterView>
       <container></container>
-      <botBubble></botBubble>
+      <botBubble v-if="user"></botBubble>
     </div>
 </template>
 <style scoped>
