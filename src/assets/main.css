@@ -7,3 +7,15 @@
     height: 100%;
     width: 100%;
 }
+
+.ql-editor {
+    background-color: #fff;
+}
+
+.ql-container {
+    width: 100%;
+}
+
+.ql-toolbar {
+    width: 100%;
+}

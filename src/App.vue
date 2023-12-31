@@ -7,7 +7,6 @@ import {container} from 'jenesius-vue-modal'
 import botBubble from './assets/components/Bot/BotBubble.vue'
 const {onload, getUserData} = useUserStore()
 import { storeToRefs } from 'pinia';
-
 const {user} = storeToRefs(useUserStore())
 
 onMounted(()=>{

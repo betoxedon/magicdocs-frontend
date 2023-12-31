@@ -45,7 +45,7 @@ async function sendChatMessage(message, agent='user'){
         content: chat.value
     })
     chat.value = ''
-    await createMessage(message, )
+    await createMessage(message)
 }
 
 function openMessage(message){

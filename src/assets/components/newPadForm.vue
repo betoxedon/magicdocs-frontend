@@ -3,7 +3,7 @@ import TitleComponent from './TitleComponent.vue';
 import inputMd from './form/inputMd.vue';
 import buttonPrimary from './form/buttonPrimary.vue';
 import TextArea from './form/TextArea.vue';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import {useDocumentStore} from '../../stores/documents.js'
 import { closeModal } from 'jenesius-vue-modal';
 const props = defineProps({

@@ -7,6 +7,7 @@ const toast = useToast()
 
 export const useDocumentStore = defineStore('document', ()=>{
     const pads = ref([])
+    const pad = ref(null)
     const padDetail = ref('')
 
     async function getPads(payload = null){
@@ -14,6 +15,13 @@ export const useDocumentStore = defineStore('document', ()=>{
             return res.data.results
         })
     }
+
+    async function getPadToDoc(payload = null){
+        pad.value = await apiAuth.api.get(`/files/${payload}`).then((res)=>{
+            return res.data
+        })
+    }
+    
 
     async function deletePad(payload = null){
         await apiAuth.api.delete(`/files/${payload}/`,).then(()=>{
@@ -39,5 +47,5 @@ export const useDocumentStore = defineStore('document', ()=>{
             return err
         })
     }
-    return { getPads, pads, padDetail, deletePad, createPad, updatePad }
+    return { getPads, pads, padDetail, deletePad, createPad, updatePad, getPadToDoc, pad }
 })

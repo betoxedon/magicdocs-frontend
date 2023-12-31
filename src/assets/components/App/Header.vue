@@ -67,7 +67,7 @@ function handleNavigation(route){
       <!-- NAVIGATION LINKS -->
       <div class="menu">
         <ul class="menu-links">
-          <li><a class="link" href="#" @click="router.push({ name: 'Home' })">Home</a></li>
+          <!-- <li><a class="link" href="#" @click="router.push({ name: 'Home' })">Home</a></li> -->
           <li v-if="user"><a class="link" href="#" @click="router.push({ name: 'Documents' })">Meus Documentos</a></li>
         </ul>
 
