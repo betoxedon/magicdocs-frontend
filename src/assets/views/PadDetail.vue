@@ -38,7 +38,7 @@ onBeforeUnmount(async () => {
         language: 'pt_BR',
         toolbar_mode: 'sliding',
         plugins: 'save preview tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
-        toolbar: 'save undo redo | inserttemplate addtemplate | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        toolbar: 'save undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
         menubar: 'file edit insert view format table tools help',
         menu: {
             file: { title: 'File', items: 'restoredraft | preview | print | save' },
