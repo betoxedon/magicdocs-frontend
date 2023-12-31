@@ -141,6 +141,7 @@ function openMessage(message){
     align-items: stretch;
     padding: 2rem;
     justify-content: flex-end;
+    z-index: 999;
 }
 
 #bot-messages {
