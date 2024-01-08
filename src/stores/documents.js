@@ -3,12 +3,29 @@ import {ref} from 'vue'
 import { useToast } from "vue-toastification";
 import apiAuth from "../api/api.js";
 import { closeModal } from "jenesius-vue-modal";
+import { useRouter } from "vue-router";
+
+const router = useRouter()
 const toast = useToast()
+
 
 export const useDocumentStore = defineStore('document', ()=>{
     const pads = ref([])
-    const pad = ref(null)
+    const padFromModel = ref([])
+    const padTemplate = ref({
+        "name": 'Novo Documento',
+        "description": '',
+        "type": 'doc',
+        "client": "",
+        "content": "",
+        "action": ""
+    })
+    const pad = ref(padTemplate.value)
     const padDetail = ref('')
+
+    function loadNewPad(){
+        pad.value = {...padTemplate.value}
+    }
 
     async function getPads(payload = null){
         pads.value = await apiAuth.api.get('/files/', {params: {q: payload}}).then((res)=>{
@@ -17,9 +34,8 @@ export const useDocumentStore = defineStore('document', ()=>{
     }
 
     async function getPadToDoc(payload = null){
-        pad.value = await apiAuth.api.get(`/files/${payload}`).then((res)=>{
-            return res.data
-        })
+        let res = await apiAuth.api.get(`/files/${payload}`)
+        return res.data
     }
     
 
@@ -30,9 +46,10 @@ export const useDocumentStore = defineStore('document', ()=>{
     }
 
     async function createPad(payload = null){
-        await apiAuth.api.post(`/files/`,payload).then(()=>{
+        await apiAuth.api.post(`/files/`,payload).then((res)=>{
             getPads()
             closeModal()
+            pad.value = res.data
         }).catch((err)=> {
             toast.warning('Verique os campos e tente novamente!')
             return err
@@ -47,5 +64,9 @@ export const useDocumentStore = defineStore('document', ()=>{
             return err
         })
     }
-    return { getPads, pads, padDetail, deletePad, createPad, updatePad, getPadToDoc, pad }
+
+    function handlePromptResponse(prompt, response){
+        pad.value.content = pad.value.content.replace(prompt, response)
+    }
+    return { getPads, pads, padDetail, deletePad, createPad, updatePad, getPadToDoc, pad, loadNewPad, handlePromptResponse, padFromModel }
 })

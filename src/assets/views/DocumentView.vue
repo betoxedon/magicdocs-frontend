@@ -14,15 +14,15 @@ const {pads} = storeToRefs(useDocumentStore())
 const {getPads, deletePad} = useDocumentStore()
 const tableVisualization = ref(true)
 
-function handleDetail(id){
-    router.push({name: 'PadDetail', query: {pad_id: id}})
+function handleDetail(document){
+  if (document.type==="doc"){
+    router.push({name: 'PadDetail', query: {pad_id: document.pad_id}})
+  } else if (document.type === "model") {
+    router.push({name: 'FromModelCreate', query: {pad_id: document.pad_id}})
+  }
 }
 
 const q = ref()
-
-function updatePad(pad){
-  openModal(newPadForm, {value: pad, action: 'atualizar'})
-}
 
 onMounted(()=> {
   getPads()
@@ -31,6 +31,7 @@ onMounted(()=> {
 </script>
 
 <template>
+  
   <div class="card-container">
     <div class="header">
       <menuButton icon="plus" label="Novo" @click.capture="openModal(newPadForm, {action: 'criar'})"></menuButton>
@@ -47,17 +48,18 @@ onMounted(()=> {
         <tr>
           <th>Titulo</th>
           <th>Cliente</th>
-          <th>Ação</th>
-          <th>Descrição</th>
+          <!-- <th>Ação</th> -->
+          <th>Tipo</th>
         </tr>
-        <tr v-for="(document, index) in pads" :key="index" >
+        <tr v-for="(document, index) in pads" :key="index">
           <td>{{document.name}} </td>
           <td>{{document.client}}</td>
-          <td>{{document.action}}</td>
-          <td>{{document.description}}</td>
-          <td><buttonPrimary width="100%" label="" icon="arrow-up-right-from-square" @click="handleDetail(document.pad_id)"></buttonPrimary></td>
-          <td><buttonPrimary width="100%" label="" icon="pen-to-square" @click="updatePad({...document})"></buttonPrimary></td>
-          <td><buttonPrimary width="100%" label="" icon="trash" @click="deletePad(document.pad_id)"></buttonPrimary></td>
+          <!-- <td>{{document.action}}</td> -->
+          <td>{{document.type === 'doc' ? 'Documento' : 'Modelo'}}</td>
+          <!-- <td><buttonPrimary width="100%" label="" icon="file-lines" @click="handleModel(document.pad_id)"></buttonPrimary></td> -->
+          <td><buttonPrimary width="100%"  label="Abrir" icon="arrow-up-right-from-square" @click="handleDetail(document)"></buttonPrimary></td>
+          <!-- <td><buttonPrimary width="100%"  label="Atualizar Dados" icon="pen-to-square" @click="updatePad({...document})"></buttonPrimary></td> -->
+          <td><buttonPrimary width="100%"  label="" icon="trash" @click="deletePad(document.pad_id)"></buttonPrimary></td>
         </tr>
       </table>
     </div>
@@ -133,6 +135,6 @@ th, td {
 
 tr:nth-child(even) {background-color: var(--color-ai-terciary);}
 
-tr:hover {background-color: var(--color-ai-primary); color: var(--color-neutral);}
+tr:hover {background-color: var(--color-ai-primary); color: var(--color-neutral); cursor: pointer;}
 tr:hover:nth-child(1) {background-color: white; color: var(--color-ai-primary);}
 </style>

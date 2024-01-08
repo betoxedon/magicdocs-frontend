@@ -107,11 +107,11 @@ function openMessage(message){
 
 <style scoped>
 #bot-bubble {
-    position: absolute;
+    position: fixed;
     height: 50px;
     width: 50px;
     bottom: 5rem;
-    right: 1rem;
+    right: 2rem;
     z-index: 1;
     border-radius: 25px;
     background-color: var(--color-ai-primary);
@@ -130,7 +130,7 @@ function openMessage(message){
 #bot-screen, #bot-messages {
     width: 40rem;
     height: 50rem;
-    position: absolute;
+    position: fixed;
     background-color: var(--color-ai-primary);
     border-radius: 2rem;
     transition: right .5s ease-in-out;
@@ -147,7 +147,7 @@ function openMessage(message){
 #bot-messages {
     width: 40rem;
     background-color: #bdbaba;
-    z-index: 1;
+    z-index: 1000;
     justify-content: flex-start;
     padding-top: 6rem;
 }

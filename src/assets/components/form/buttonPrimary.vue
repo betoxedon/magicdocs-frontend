@@ -44,8 +44,9 @@ const style = ref(`width: ${props.width}; height: ${props.height};`)
         border-radius: 10px;
         color: var(--color-neutral);
         background-color: var(--color-ai-primary);
-        padding: .5rem 2rem;
+        padding: .5rem .5rem;
         cursor: pointer;
+        width: fit-content;
         font-family: 'Rubik';
         margin: auto;
     }

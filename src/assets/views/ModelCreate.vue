@@ -2,100 +2,45 @@
 import { useDocumentStore } from '../../stores/documents';
 import { storeToRefs } from 'pinia';
 import { onBeforeMount, onMounted, onBeforeUnmount, ref, onUpdated } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import buttonPrimary from '../components/form/buttonPrimary.vue'
-import { openModal } from 'jenesius-vue-modal';
-import newPadForm from '../components/newPadForm.vue';
-import {useChatStore} from '../../stores/chat.js'
-import htmlEntities from '../../scripts/specialCharParse.js'
-import createDocumentoJurisprudencia from '../components/createDocumentoJurisprudencia.vue'
-import { useToast } from 'vue-toastification';
+import { useRoute } from 'vue-router';
+import newPadForm from '../components/newPadForm.vue'
+import { openModal } from 'jenesius-vue-modal'
 
-const router = useRouter()
-const toast = useToast()
-
-const { requestPrompt } = useChatStore()
-const { promptResponse } = storeToRefs(useChatStore())
-
-
-const { getPadToDoc, updatePad, loadNewPad, handlePromptResponse } = useDocumentStore()
-const {pad} = storeToRefs(useDocumentStore())
+const { getPadToDoc } = useDocumentStore()
+const pad = ref(null)
 const route = useRoute()
 const loaded = ref(false)
 
-
-
 onBeforeMount(async () => {
-    if (route.query.pad_id){
-        pad.value = await getPadToDoc(route.query.pad_id)
-    } else {
-        loadNewPad()
-    }
+    pad.value = await getPadToDoc(route.query.pad_id)
+    pad.value.type = 'model'
+    pad.value.action = 'criar'
+    delete pad.value.pad_id
 })
 
 onMounted(async () => {
-    setInterval(() => {
-        saveData()
-    }, 5 * 60 * 1000);
     setTimeout(() => {
         loaded.value = true
     }, 1500);
 })
 
-async function saveData() {
+async function createModel() {
     pad.value.content = tinymce.activeEditor.getContent()
-    if (pad.value.pad_id){
-        await updatePad(pad.value)
-    } else {
-        openModal(newPadForm, {value: pad.value, action: 'criar'})
-    }
-}
-onBeforeUnmount(async () => {
-    if (pad.value.pad_id){
-        await saveData()
-    }
-    loadNewPad()
-})
-
-async function createTextFragment(){
-    let promptOri = pad.value.content.split('\n').pop().replace(/(<([^>]+)>)/gi, "")
-    let prompt = htmlEntities(pad.value.content.split('\n').pop().replace(/(<([^>]+)>)/gi, ""))
-    console.log(promptOri)
-    if (prompt.length===0 || prompt==="&nbsp;"){
-        toast.warning("Você pode utilizar o último parágrafo como instrução para o assistente.")
-    } else {
-        await requestPrompt(prompt)
-        await handlePromptResponse(promptOri, promptResponse.value)
-    }
+    openModal(newPadForm, {value: pad.value, action: 'criar'})
 }
 
-function createDocument(){
-    openModal(createDocumentoJurisprudencia)
-}
 
-function createModel(){
-    router.push({name: 'ModelCreate', query: {pad_id: pad.value.pad_id}})
-}
 
 </script>
 
 <template>
     <div id="padDetail">
         <div class="sidemenu">
-            <div class="menuItem" @click.capture="saveData">
+            <div class="menuItem" @click.capture="createModel">
                 <font-awesome-icon icon="floppy-disk" />
             </div>
-            <div class="menuItem" @click.capture="createTextFragment">
-                <font-awesome-icon icon="file-signature" />
-            </div>
-            <div class="menuItem" @click.capture="createModel" v-if="pad.pad_id">
-                <font-awesome-icon icon="bookmark" />
-            </div>
-            <!-- <div class="menuItem" @click.capture="createDocument">
-                <font-awesome-icon icon="wand-magic-sparkles" />
-            </div> -->
-            
         </div>
+
         <TinyEditor api-key="229tbl1echk2xkfmrk0brqszsiq67qrll6jr3hbxhmpj8xj3" v-model="pad.content" :init="{
             language: 'pt_BR',
             toolbar_mode: 'sliding',
@@ -109,15 +54,15 @@ function createModel(){
             tinycomments_author: 'Author name',
             height: '100%',
             save_onsavecallback: () => {
-                saveData();
+                createModel();
             }
         }" />
+        <transition name="fade">
+            <div v-if="!loaded" class="loading">
+                <font-awesome-icon icon="spinner" spin size="2xl" style="color: #050505;" class="icon"/>
+            </div>
+        </transition>
     </div>
-    <transition name="fade">
-        <div v-if="!loaded" class="loading">
-            <font-awesome-icon icon="spinner" spin size="2xl" style="color: #050505;" class="icon"/>
-        </div>
-    </transition>
 </template>
 
 <style scoped>
@@ -155,6 +100,7 @@ function createModel(){
         transform: opacity 1.5s ease;
     }
 
+    
     #padDetail {
         display: flex;
         width: 100%;

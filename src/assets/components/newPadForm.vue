@@ -3,7 +3,7 @@ import TitleComponent from './TitleComponent.vue';
 import inputMd from './form/inputMd.vue';
 import buttonPrimary from './form/buttonPrimary.vue';
 import TextArea from './form/TextArea.vue';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import {useDocumentStore} from '../../stores/documents.js'
 import { closeModal } from 'jenesius-vue-modal';
 const props = defineProps({
@@ -15,16 +15,19 @@ const props = defineProps({
         defaul: 'criar'
     }
 })
-const {createPad, updatePad} = useDocumentStore()
-const padModel = ref({
-    "name": '',
-    "description": '',
-    "client": "",
-    "action": ""
 
+const pad = computed({
+    get(){
+        return props.value
+    },
+    set(newValue){
+        return newValue
+    }
 })
 
-const pad = ref(props.value ? props.value : padModel.value)
+
+const {createPad, updatePad} = useDocumentStore()
+
 
 async function Submit(){
     if (props.action==='criar'){
