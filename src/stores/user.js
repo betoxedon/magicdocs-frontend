@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import apiAuth from '../api/api.js'
 import {ref} from 'vue'
 import { useToast } from "vue-toastification";
+import axios from "axios";
 
 const toast = useToast()
 
@@ -44,17 +45,22 @@ export const useUserStore = defineStore('user', ()=>{
     }
 
     async function register(payload){
-        let res = await apiAuth.api.post('/users/', payload)
-        .then((res)=>{
-            if (res.status===201){
-                toast.success("Usuário criado com sucesso!")
-                return true
-            }
-        }).catch((err)=>{
-            toast.error(Object.values(err.response.data)[0][0])
-            return false
+        const register = axios.create()
+        register.interceptors.request.use(async config => {
+            config.baseURL = `/api`
+            return config
         })
-        console.log(res)
+        let res = await register.post('/users/', payload)
+        // .then((res)=>{
+        //     console.log(res)
+        //     if (res.status===201){
+        //         toast.success("Usuário criado com sucesso!")
+        //         return true
+        //     }
+        // }).catch((err)=>{
+        //     toast.error(Object.values(err.response.data)[0][0])
+        //     return false
+        // })
         return res
     }
 

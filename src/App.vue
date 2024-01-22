@@ -1,25 +1,25 @@
 <script setup>
 import { RouterView} from 'vue-router';
-import Header from './assets/components/App/Header.vue';
-import { useUserStore } from './stores/user';
-import { onMounted,} from 'vue';
-import {container} from 'jenesius-vue-modal'
-import botBubble from './assets/components/Bot/BotBubble.vue'
-const {onload, getUserData} = useUserStore()
-import { storeToRefs } from 'pinia';
-const {user} = storeToRefs(useUserStore())
+import HeaderComponent from './assets/components/HeaderComponent.vue';
+// import { useUserStore } from './stores/user';
+// import { onMounted,} from 'vue';
+// import {container} from 'jenesius-vue-modal'
+// import botBubble from './assets/components/Bot/BotBubble.vue'
+// const {onload, getUserData} = useUserStore()
+// import { storeToRefs } from 'pinia';
+// const {user} = storeToRefs(useUserStore())
 
-onMounted(()=>{
-  onload()
-  getUserData()
+// onMounted(()=>{
+//   onload()
+//   getUserData()
 
-})
+// })
 </script>
 
 <template>
-    <Header></Header>
+    <HeaderComponent></HeaderComponent>
     <div  class='container'>
-      <RouterView style="max-width: 1024px;"></RouterView>
+      <RouterView></RouterView>
       <container></container>
       <botBubble v-if="user"></botBubble>
     </div>
@@ -35,7 +35,6 @@ onMounted(()=>{
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  padding: 1rem 2rem;
   position: relative;
   overflow-x: hidden;
 }

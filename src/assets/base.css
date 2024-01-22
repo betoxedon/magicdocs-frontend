@@ -1,19 +1,11 @@
 :root {
-  --color-primary: #161A30;
-  --color-secondary: #31304D;
-  --color-background: #B6BBC4;
-  --color-neutral: #F0ECE5;
-
-  
-  /* assistente */
-
-  --color-ai-primary: #272829;
-  --color-ai-secondary: #61677A;
-  --color-ai-terciary: #D8D9DA;
+  --color-primary: #1e1c1c;
+  --color-secondary: #212121;
+  --color-terciary: #ff4545;
+  --color-neutral: #f0eeec;
 
   font-size: 62.5%;
   font-family: 'Rubik', sans-serif;
-
 }
 
 html{
