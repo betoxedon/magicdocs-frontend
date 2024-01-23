@@ -14,6 +14,7 @@ const {errors, defineField, handleSubmit } = useForm({
         email: yup.string().email().required("Informe seu email."),
         first_name: yup.string().required("Informe seu nome.").min(3, "Mínimo 3 caracteres"),
         last_name: yup.string().required("Informe seu sobrenome.").min(3, "Mínimo 3 caracteres"),
+        phone_number: yup.string().required("Informe seu telefone.").min(11, "Verifique o telefone").max(11, "Verifique o telefone"),
         password: yup.string().min(8, "A senha deve ter ao menos 8 caracteres").required("Insira sua senha."),
         passwordRepeat: yup.string().oneOf([yup.ref("password"), null], 'As senhas não coincidem.')
     })
@@ -24,6 +25,7 @@ const [first_name] = defineField('first_name', {validateOnModelUpdate: true})
 const [last_name] = defineField('last_name', {validateOnModelUpdate: true})
 const [password] = defineField('password', {validateOnModelUpdate: true})
 const [passwordRepeat] = defineField('passwordRepeat', {validateOnModelUpdate: true})
+const [phone_number] = defineField('phone_number', {validateOnModelUpdate: true})
 
 const router = useRouter()
 
@@ -50,11 +52,18 @@ const onSubmit = handleSubmit(values=>{
                 </template>
             </inputMd>
         </div>
-        <inputMd  v-model="email" label="Email" placeholder="email@email.com" id="register_email" icon="at">
-            <template v-slot:bottom-slots>
+        <div class="row">
+            <inputMd  v-model="email" class="inline-input" label="Email" placeholder="email@email.com" id="register_email" icon="at">
+                <template v-slot:bottom-slots>
                     <passwordHints v-if="errors.email" :message=" errors.email "></passwordHints>
                 </template>
-        </inputMd>
+            </inputMd>
+            <inputMd  v-model="phone_number" class="inline-input" label="Telefone" placeholder="81999999999" id="register_phone_number" icon="phone">
+                <template v-slot:bottom-slots>
+                    <passwordHints v-if="errors.phone_number" :message=" errors.phone_number "></passwordHints>
+                </template>
+            </inputMd>
+        </div>
         <div class="row">
             <inputMd class="inline-input" v-model="password" label="Senha" placeholder="Digite sua senha" id="register_senha" icon="lock" type="password">
                 <template v-slot:bottom-slots>
