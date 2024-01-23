@@ -34,7 +34,7 @@ onMounted(()=> {
   
   <div class="card-container">
     <div class="header">
-      <menuButton icon="plus" label="Novo" @click.capture="openModal(newPadForm, {action: 'criar'})"></menuButton>
+      <menuButton icon="plus" label="Novo" @click.capture="router.push({name: 'PadDetail'})"></menuButton>
       <div class="search-bar">
         <input type="search" @input="getPads(q)" v-model="q" placeholder="Pesquisar" @keyup.enter="getPads(q)">
         <font-awesome-icon class="menu-item" icon="magnifying-glass" size="xl" @click="getPads(q)"/>

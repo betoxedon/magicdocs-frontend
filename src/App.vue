@@ -21,7 +21,7 @@ onMounted(()=>{
     <div  class='container'>
       <RouterView style="max-width: 1024px;"></RouterView>
       <container></container>
-      <botBubble v-if="user"></botBubble>
+      <!-- <botBubble v-if="user"></botBubble> -->
     </div>
 </template>
 <style scoped>

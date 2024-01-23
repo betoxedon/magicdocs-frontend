@@ -99,14 +99,12 @@ function createModel(){
         <TinyEditor api-key="229tbl1echk2xkfmrk0brqszsiq67qrll6jr3hbxhmpj8xj3" v-model="pad.content" :init="{
             language: 'pt_BR',
             toolbar_mode: 'sliding',
-            plugins: 'save preview tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            plugins: 'save preview  anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount                  ',
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
             menubar: 'file edit insert view format table tools help',
             menu: {
                 file: { title: 'File', items: 'restoredraft | preview | print | save' },
             },
-            tinycomments_mode: 'embedded',
-            tinycomments_author: 'Author name',
             height: '100%',
             save_onsavecallback: () => {
                 saveData();
