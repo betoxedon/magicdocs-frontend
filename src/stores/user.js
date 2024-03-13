@@ -1,68 +1,90 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 import apiAuth from '../api/api.js'
-import {ref} from 'vue'
-import { useToast } from "vue-toastification";
-import axios from "axios";
-
+import { ref } from 'vue'
+import axios from 'axios'
+import { useToast } from 'vue-toastification'
 const toast = useToast()
+export const useUserStore = defineStore('user', () => {
+  const user = ref({})
+  const loggedIn = ref(false)
 
-export const useUserStore = defineStore('user', ()=>{
-    const token = ref(null)
-    const user = ref(null)
-
-    async function login(email, password){
-        token.value = await apiAuth.login({"email":email, "password":password})
-        console.log(token.value)
-        if (token.value != null) {
-            user.value = getUserData()
-            return true
-        }
-        return false
+  async function login(payload) {
+    let response = await apiAuth.login(payload)
+    if (response.status) {
+      user.value = getUserData()
+      return true
     }
+    return false
+  }
 
-    
-    async function getUserData(){
-        user.value = await apiAuth.api.get('/users/').then((res)=>{
-            sessionStorage.setItem('user', JSON.stringify(res.data.results[0]))
-            return res.data.results[0]
-        })
+  function getUser() {
+    return user.value
+  }
+
+  function getLoggedStatus() {
+    return loggedIn.value
+  }
+  async function getUserData() {
+    user.value = await apiAuth.api.get('/users/').then((res) => {
+      sessionStorage.setItem('user', JSON.stringify(res.data.results[0]))
+      loggedIn.value = true
+      user.value = res.data.results[0]
+      return res.data.results[0]
+    })
+    return user.value
+  }
+
+  function onload() {
+    try {
+      user.value = JSON.parse(sessionStorage.getItem('user'))
+    } catch (error) {
+      console.log(error)
     }
+  }
 
-    function onload() {
-        try {
-           user.value = JSON.parse(sessionStorage.getItem('user'))
-        } catch (error) {
-            console.log(error)
-        }
+  function logout() {
+    user.value = null
+    loggedIn.value = false
+    sessionStorage.removeItem('refresh')
+    sessionStorage.removeItem('expiration')
+    sessionStorage.removeItem('user')
+    sessionStorage.removeItem('access')
+  }
+
+  async function register(payload) {
+    const register = axios.create()
+    register.interceptors.request.use(async (config) => {
+      config.baseURL = `/api`
+      return config
+    })
+    let res = await register.post('/users/', payload)
+    // .then((res)=>{
+    //     console.log(res)
+    //     if (res.status===201){
+    //         toast.success("Usuário criado com sucesso!")
+    //         return true
+    //     }
+    // }).catch((err)=>{
+    //     toast.error(Object.values(err.response.data)[0][0])
+    //     return false
+    // })
+    return res
+  }
+
+  async function updateUser(payload) {
+    let headers = {
+      'Content-Type': 'multipart/form-data'
     }
-
-    function logout(){
-        user.value = null
-        sessionStorage.removeItem("refresh");
-        sessionStorage.removeItem("expiration");
-        sessionStorage.removeItem("user");
-        sessionStorage.removeItem("access");
+    try {
+      const request = await apiAuth.api.patch('/users/' + user.value.id + '/', payload, { headers })
+      if (request.status === 200) {
+        getUserData()
+        toast.success('Perfil Atualizado com sucesso!')
+      }
+    } catch (e) {
+      console.log(e)
     }
+  }
 
-    async function register(payload){
-        const register = axios.create()
-        register.interceptors.request.use(async config => {
-            config.baseURL = `/api`
-            return config
-        })
-        let res = await register.post('/users/', payload)
-        // .then((res)=>{
-        //     console.log(res)
-        //     if (res.status===201){
-        //         toast.success("Usuário criado com sucesso!")
-        //         return true
-        //     }
-        // }).catch((err)=>{
-        //     toast.error(Object.values(err.response.data)[0][0])
-        //     return false
-        // })
-        return res
-    }
-
-    return { login, user, onload, logout, register, getUserData }
+  return { login, user, onload, logout, register, getUserData, loggedIn, getUser, getLoggedStatus, updateUser }
 })
