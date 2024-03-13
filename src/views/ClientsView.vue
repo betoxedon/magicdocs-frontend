@@ -1,8 +1,6 @@
 <script setup>
-import ClientFormComponent from '../components/CLientFormComponent.vue'
 import InputComponent from '../components/InputComponent.vue'
 import ClientCard from '../components/ClientCard.vue'
-import { promptModal, closeModal } from 'jenesius-vue-modal'
 import { onMounted, ref } from 'vue'
 import { useClientStore } from '../stores/clients'
 import { useRouter } from 'vue-router'
