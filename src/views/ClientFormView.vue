@@ -1,5 +1,5 @@
 <script setup>
-import ClientFormComponent from '../components/CLientFormComponent.vue'
+import ClientFormComponent from '../components/ClientFormComponent.vue'
 </script>
 
 <template>
