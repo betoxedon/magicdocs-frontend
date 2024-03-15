@@ -7,6 +7,7 @@ const toast = useToast()
 export const useUserStore = defineStore('user', () => {
   const user = ref({})
   const loggedIn = ref(false)
+  const token = ref('')
 
   async function login(payload) {
     let response = await apiAuth.login(payload)
@@ -57,7 +58,13 @@ export const useUserStore = defineStore('user', () => {
       config.baseURL = `/api`
       return config
     })
-    let res = await register.post('/users/', payload)
+    try {
+      let res = await register.post('/users/', payload)
+      return res
+    } catch (error) {
+      toast.warning(Object.values(error.response.data)[0][0])
+      throw error
+    }
     // .then((res)=>{
     //     console.log(res)
     //     if (res.status===201){

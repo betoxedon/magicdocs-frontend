@@ -37,7 +37,6 @@ onMounted(() => {
   let ano = date.getFullYear()
   let mes = date.getMonth()
   let dia = date.getDate()
-  console.log(`${dia} de ${months[mes]} de ${ano}`)
   userCreatedOn.value = `${dia} de ${months[mes]} de ${ano}`
 })
 
@@ -113,7 +112,6 @@ onMounted(async () => {
   let ano = date.getFullYear()
   let mes = date.getMonth()
   let dia = date.getDate()
-  console.log(`${dia} de ${months[mes]} de ${ano}`)
   userCreatedOn.value = `${dia} de ${months[mes]} de ${ano}`
 })
 

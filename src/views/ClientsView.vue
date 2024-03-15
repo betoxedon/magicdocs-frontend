@@ -13,7 +13,6 @@ const searchString = ref('')
 
 onMounted(async () => {
   filteredArray.value = await getClients()
-  console.log(filteredArray.value)
 })
 
 async function handleClientForm() {

@@ -4,9 +4,14 @@ import InputMd from './InputMd.vue'
 import buttonPrimary from './buttonPrimary.vue'
 import ErrorComponent from './ErrorComponent.vue'
 import { useUserStore } from '../stores/user'
+import { useToast } from 'vue-toastification'
+import { useRouter } from 'vue-router'
 import * as yup from 'yup'
+
+const router = useRouter()
+const toast = useToast()
 const emits = defineEmits('toggle')
-const { login } = useUserStore()
+const { login, register } = useUserStore()
 
 const schema = yup.object({
   email: yup.string().required('Este campo é obrigatório').email('Insira um email válido.'),
@@ -26,14 +31,21 @@ const [first_name] = defineField('first_name')
 const [password] = defineField('password')
 const [password_repeat] = defineField('password_repeat')
 
-const onSubmit = handleSubmit((values) => {
-  login(values)
+const onSubmit = handleSubmit(async (values) => {
+  let res = await register(values)
+  console.log(res)
+  if (res.status === 201) {
+    toast.success('Usuário criado com sucesso!')
+    window.location.reload()
+  } else {
+    toast.success('Houve um erro ao cadastrar o usuário.')
+  }
 })
 </script>
 
 <template>
   <div class="form-container">
-    <form @submit="onSubmit">
+    <form @submit.prevent="onSubmit">
       <h3>Faça parte do MagicDocs</h3>
       <InputMd placeholder="Nome" icon="at" bottomslots v-model="first_name">
         <template v-slot:bottom>
@@ -50,25 +62,14 @@ const onSubmit = handleSubmit((values) => {
           <ErrorComponent :error="errors.password"></ErrorComponent>
         </template>
       </InputMd>
-      <InputMd
-        placeholder="Password"
-        type="password"
-        icon="lock"
-        bottomslots
-        v-model="password_repeat"
-      >
+      <InputMd placeholder="Password" type="password" icon="lock" bottomslots v-model="password_repeat">
         <template v-slot:bottom>
           <ErrorComponent :error="errors.password_repeat"></ErrorComponent>
         </template>
       </InputMd>
       <div style="display: flex; flex-direction: column; gap: 1rem">
-        <buttonPrimary label="Cadastrar" style="width: 100%"></buttonPrimary>
-        <buttonPrimary
-          outlined
-          label="Já possuo login"
-          style="width: 100%"
-          @click="emits('toggle')"
-        ></buttonPrimary>
+        <buttonPrimary label="Cadastrar" style="width: 100%" type="submit"></buttonPrimary>
+        <buttonPrimary outlined label="Já possuo login" style="width: 100%" @click="emits('toggle')"></buttonPrimary>
       </div>
     </form>
     <div class="banner">

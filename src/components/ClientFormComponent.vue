@@ -100,7 +100,6 @@ const onSubmit = handleSubmit(async (values) => {
   values.cpf = values.cpf.replaceAll('.', '').replaceAll('-', '')
   values.postal_code = values.postal_code.replaceAll('.', '').replaceAll('-', '')
   let response
-  console.log(route.query.id)
   if (route.query.id) {
     response = await updateClient(values, route.query.id)
   } else {

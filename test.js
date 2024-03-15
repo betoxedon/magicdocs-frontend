@@ -122,5 +122,3 @@ let bairros = [
 ]
 
 let mapped = bairros.map((item) => ({ label: item.nome, value: item.id }))
-
-console.log(mapped)

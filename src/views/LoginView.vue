@@ -1,11 +1,12 @@
 <script setup>
-import {} from 'vee-validate'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TranstionComponent from '../components/TransitionComponent.vue'
 import LoginForm from '../components/LoginForm.vue'
 import RegisterForm from '../components/RegisterForm.vue'
-
+import { useRoute } from 'vue-router'
+const route = useRoute()
 const login = ref(true)
+
 function handleLogin() {
   login.value = !login.value
 }

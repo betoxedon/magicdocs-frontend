@@ -43,7 +43,6 @@ async function handleRequest() {
   createUserMessage()
   await createMessage(message)
     .then((res) => {
-      console.log(res)
       createBotMessage(res.data.response)
     })
     .then(() => {

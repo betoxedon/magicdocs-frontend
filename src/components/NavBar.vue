@@ -20,7 +20,9 @@ function handleLogout() {
 
 onMounted(() => {
   try {
-    getUserData()
+    if (user) {
+      getUserData()
+    }
   } catch (error) {
     console.log(error)
   }

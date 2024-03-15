@@ -67,7 +67,6 @@ async function createTextFragment() {
       .pop()
       .replace(/(<([^>]+)>)/gi, '')
   )
-  console.log(promptOri)
   if (prompt.length === 0 || prompt === '&nbsp;') {
     toast.warning('Você pode utilizar o último parágrafo como instrução para o assistente.')
   } else {

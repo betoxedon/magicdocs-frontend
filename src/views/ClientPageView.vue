@@ -29,7 +29,6 @@ const clientFolder = ref(null)
 
 function dragoverHandler(ev) {
   ev.preventDefault()
-  console.log(ev)
   // ev.dataTransfer.dropEffect = 'move'
 }
 async function dropHandler(ev) {
