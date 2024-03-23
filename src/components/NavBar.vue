@@ -37,14 +37,14 @@ const itemsArray = [
     name: 'Clientes',
     function: null
   },
-  {
-    name: 'Documentos',
-    function: null
-  },
-  {
-    name: 'Financeiro',
-    function: null
-  },
+  // {
+  //   name: 'Documentos',
+  //   function: null
+  // },
+  // {
+  //   name: 'Financeiro',
+  //   function: null
+  // },
   {
     name: 'Divisor',
     function: null
