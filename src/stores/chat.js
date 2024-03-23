@@ -3,8 +3,18 @@ import { ref } from 'vue'
 import apiAuth from '../api/api.js'
 
 export const useChatStore = defineStore('chat', () => {
+
   async function createMessage(payload = null) {
-    return apiAuth.api.post(`/messages/`, payload)
+    
+    return apiAuth.api
+      .post(`/messages/`, payload, {
+        validateStatus: function (status) {
+          return true
+        }
+      })
+      .catch((error) => {
+        throw error
+      })
   }
 
   async function requestPrompt(payload = null) {

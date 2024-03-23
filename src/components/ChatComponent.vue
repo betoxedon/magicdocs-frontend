@@ -32,24 +32,38 @@ const request = ref('')
 
 async function handleRequest() {
   if (selectedPrompt.value === null) {
-    selectedPrompt.value = 9
+    toast.warning('Selecione ao menos um agente.')
+  } else {
+    loading.value = true
+    let message = {
+      content: `${request.value}`,
+      prompt: selectedPrompt.value,
+      session: sectionId.value
+    }
+    createUserMessage()
+    await createMessage(message)
+      .then((res) => {
+        if (res.status===201){
+          createBotMessage(res.data.response)
+        } else {
+          switch (res.status) {
+            case 500:
+              createBotMessage('Sinto muito, mas não consegui concluir a solicitação. Tente novamente mais tarde!')
+              loading.value = false
+              break;
+          
+            default:
+              createBotMessage(res.statusText)
+              break;
+          }
+        }
+      })
+      .then(() => {
+        getUserData()
+        loading.value = false
+        botchat.value.lastElementChild.scrollIntoView()
+      })
   }
-  loading.value = true
-  let message = {
-    content: `${request.value}`,
-    prompt: selectedPrompt.value,
-    session: sectionId.value
-  }
-  createUserMessage()
-  await createMessage(message)
-    .then((res) => {
-      createBotMessage(res.data.response)
-    })
-    .then(() => {
-      getUserData()
-      loading.value = false
-      botchat.value.lastElementChild.scrollIntoView()
-    })
 }
 
 function createUserMessage() {
@@ -94,7 +108,7 @@ function openBot() {
       </div>
       <div class="bot-chat" ref="botchat">
         <botMessage
-          v-for="(message, index) in chatLog"
+          v-for="(message, index) in chatLog" :key="index"
           :message="message"
           @copy="handleCopy"
           @import="(e) => emits('import', e)"
@@ -104,7 +118,7 @@ function openBot() {
       <div class="bot-request">
         <div class="request-navigation">
           <select name="" id="" v-model="selectedPrompt">
-            <option v-for="(prompt, index) in prompts" :key="index" :value="prompt.id">
+            <option v-for="(prompt, index) in prompts" :key="index" :value="prompt.id" :selected="prompt.default">
               {{ prompt.name }}
             </option>
           </select>
