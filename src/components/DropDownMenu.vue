@@ -2,11 +2,23 @@
 import TransitionComponentSlide from './TransitionComponentSlide.vue'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { onClickOutside } from '@vueuse/core'
+
+const dropdown = ref(null)
+onClickOutside(dropdown, () => closeDropdown())
+
 const router = useRouter()
+
 const dropdrownOpen = ref(false)
+
 function toggleDropdown() {
   dropdrownOpen.value = !dropdrownOpen.value
 }
+
+function closeDropdown() {
+  dropdrownOpen.value = false
+}
+
 const props = defineProps({
   list: {
     type: Array,
@@ -21,7 +33,7 @@ function handleRouter(name) {
 </script>
 
 <template>
-  <div class="dropdown">
+  <div class="dropdown" ref="dropdown">
     <div class="drodown-button" @click.capture="toggleDropdown">
       <slot></slot>
     </div>
