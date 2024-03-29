@@ -1,4 +1,5 @@
 <script setup>
+import avatar from '../images/avatar.jpg'
 const props = defineProps({
   img: {
     type: String,
@@ -9,7 +10,8 @@ const props = defineProps({
 
 <template>
   <div>
-    <img :src="props.img" alt="Imagem de Perfil" />
+    <img :src="avatar" alt="Imagem de Perfil" v-if="props.img === null"/>
+    <img :src="props.img" alt="Imagem de Perfil" v-else/>
   </div>
 </template>
 
