@@ -25,7 +25,7 @@ function handleImport(e) {
 }
 
 function handleBack(){
-  router.push({name: 'Documentos'})
+  router.push({ name: 'ClientPage', query: { id: file.value.client } })
 }
 </script>
 
