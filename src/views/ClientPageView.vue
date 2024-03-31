@@ -1,7 +1,8 @@
 <script setup>
 import ClientPerfilItem from '../components/ClientPerfilItem.vue'
 import FileCard from '../components/FileCard.vue'
-import { onMounted, ref } from 'vue'
+import imageComponentModal from '../components/imageComponentModal.vue'
+import { onMounted, ref, computed } from 'vue'
 import { useClientStore } from '../stores/clients'
 import { useRoute, useRouter } from 'vue-router'
 import { useFileStore } from '../stores/files'
@@ -25,6 +26,16 @@ onMounted(async () => {
 const filteredArray = ref([])
 const clientFolder = ref(null)
 
+const images = computed(()=>{
+  return files.value.filter(item => ['image/jpeg', 'image/png'].includes(item.type) )
+})
+const documentos = computed(()=>{
+  return files.value.filter(item => item.type === 'doc')
+})
+const pdfs = computed(()=>{
+  return files.value.filter(item => item.type === 'application/pdf')
+})
+
 // DRAG AND DROP FUNCTION
 
 function dragoverHandler(ev) {
@@ -39,20 +50,6 @@ async function dropHandler(ev) {
 async function createFile(file) {
   let files = file
   openModal(fileFormModal, { file: files })
-  // for (let index = 0; index < files.length; index++) {
-  //   const element = files[index]
-  //   let payload = {
-  //     name: element.name,
-  //     description: '',
-  //     file: element,
-  //     client: route.query.id,
-  //     type: 'pdf'
-  //   }
-  //   let formData = new FormData()
-  //   formData = { ...payload }
-  //   await postFiles(formData)
-  //   filteredArray.value = await getFiles()
-  // }
 }
 
 async function handleDeactivate() {
@@ -68,6 +65,7 @@ async function handleActivate() {
 function handleNewDocument() {
   openModal(fileFormModal)
 }
+
 </script>
 
 <template>
@@ -108,7 +106,21 @@ function handleNewDocument() {
         @drop.prevent="(event) => dropHandler(event)"
         @dragover.prevent="(event) => dragoverHandler(event)"
       >
-        <FileCard v-for="(file, index) in filteredArray" :key="index" :file="file" />
+        <span style="margin: 0 auto;">Adicione novos documentos arrastando arquivos para cá ou crie utilizando o botão acima</span>
+        <div v-if="documentos.length" class="documentos">
+          <h3>Documentos:</h3>
+          <FileCard v-for="(file, index) in documentos" :key="index" :file="file" />
+        </div>
+        <div v-if="pdfs.length" class="documentos">
+          <h3>PDF:</h3>
+          <FileCard v-for="(file, index) in pdfs" :key="index" :file="file" />
+        </div>
+        <div class="documentos" v-if="images.length">
+          <h3 >Imagens:</h3>
+          <div class="images">
+            <img v-for="(img, index) in images" :key="index" :src="img.file" alt="" @click="openModal(imageComponentModal, {file: img})">
+          </div>
+        </div>
         <div
           style="
             display: flex;
@@ -118,7 +130,7 @@ function handleNewDocument() {
             height: 100%;
             justify-content: center;
           "
-          v-if="filteredArray.length === 0"
+          v-if="files.length === 0"
         >
           <span>Ainda não há documentos aqui.</span>
           <font-awesome-icon icon="file-import" size="2xl" />
@@ -131,9 +143,33 @@ function handleNewDocument() {
 </template>
 
 <style scoped>
+
+.documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.images img {
+  aspect-ratio: 1.5;
+  height: 150px;
+  cursor: zoom-in;
+  transition: all ease-in-out .1s;
+}
+
+.images img:hover {
+  transform: scale(1.05);
+}
+
 .fileslist {
-  overflow-y: auto;
-  max-height: 100vh;
+  max-height: fit-content;
 }
 
 .btn-new-file {

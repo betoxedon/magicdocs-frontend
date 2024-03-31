@@ -38,7 +38,7 @@ const selected = computed({
 <template>
   <div class="formgroup">
     <label :for="`${label}_input`">{{ label }}</label>
-    <select :name="label" :id="`${label}_select`" v-model="selected">
+    <select :name="label" :id="`${label}_select`" v-model="selected" >
       <option value="" selected disabled>{{ placeholder }}</option>
       <option v-for="(option, index) in options" :key="index" :value="option.value">
         {{ option.label }}

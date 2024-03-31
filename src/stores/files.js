@@ -45,6 +45,17 @@ export const useFileStore = defineStore('files', () => {
     return request
   }
 
+  async function updateFiles(payload, id) {
+    let request = await apiAuth.api.patch(`/files/${id}/`, payload ) 
+    return request
+  }
+
+  async function deleteFile(id) {
+    let request = await apiAuth.api.delete(`/files/${id}/`) 
+    return request
+  }
+
+
   async function updateDocFile(payload) {
     let headers = {
       'Content-Type': 'multipart/form-data'
@@ -53,5 +64,5 @@ export const useFileStore = defineStore('files', () => {
     return request
   }
 
-  return { postFiles, getFiles, files, getSingleFile, getClientFiles, updateDocFile }
+  return { postFiles, getFiles, files, getSingleFile, getClientFiles, updateDocFile, updateFiles, deleteFile }
 })

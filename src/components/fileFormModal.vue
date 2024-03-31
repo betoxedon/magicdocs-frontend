@@ -1,36 +1,64 @@
 <script setup>
 import inputComponent from '../components/InputComponent.vue'
-import { useRoute } from 'vue-router'
-import { ref, computed, onMounted } from 'vue'
+import SelectComponent from './SelectComponent.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { onMounted, computed } from 'vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { closeModal } from 'jenesius-vue-modal'
 import { useFileStore } from '../stores/files.js'
 import { useToast } from 'vue-toastification'
+import { storeToRefs } from 'pinia'
 const toast = useToast()
-const props = defineProps(['file'])
+const props = defineProps(['file', 'updatefile', 'ask_client', 'client', 'text'])
 
-const { postFiles } = useFileStore()
+
+import { useClientStore } from '../stores/clients'
+const { getClients } = useClientStore()
+const { clients } = storeToRefs(useClientStore())
+
+onMounted(async () => {
+  await getClients()
+})
+
+const clientsOptions = computed(()=>{
+  let arr = clients.value.map(item => {
+    return { label: item.name, value: item.id }
+  })
+  return arr
+})
+
+
+const { postFiles, updateFiles, getFiles } = useFileStore()
 const route = useRoute()
+const router = useRouter()
 async function createFile(values) {
   let payload = {
     name: values.name,
     description: values.description,
     key_words: values.key_words,
-    client: route.query.id
+    client: values.client
   }
   if (values.file === undefined) {
     payload.type = 'doc'
+    payload.content = props.text
   } else {
     payload.file = values.file[0]
     payload.type = values.file.type
   }
   let formData = new FormData()
   formData = { ...payload }
-  let res = await postFiles(formData)
-  if (res.status === 201) {
+  let res
+  if (props.updatefile){
+    res = await updateFiles(payload, props.updatefile.id)
+  } else {
+    res = await postFiles(formData)
+  }
+  if ([200, 201].includes(res.status)) {
+    getFiles()
     closeModal()
     toast.success('Arquivo salvo com sucesso.')
+    router.push({name: "DocumentView", query: {id: res.data.id}})
   } else {
     toast.warning('Houve um erro ao salvar seus arquivos. Tente novamente.')
   }
@@ -40,24 +68,39 @@ const schema = yup.object({
   name: yup.string().required('Este campo é obrigatório'),
   description: yup.string().required('Este campo é obrigatório'),
   key_words: yup.string().required('Este campo é obrigatório'),
-  file: yup.mixed()
+  file: yup.mixed(),
+  client: yup.number()
 })
 const { values, errors, setFieldValue, handleSubmit, defineField } = useForm({
   validationSchema: schema
 })
+
 const [file] = defineField('file')
 const [name] = defineField('name')
 const [description] = defineField('description')
 const [key_words] = defineField('key_words')
+const [client] = defineField('client')
 
 const onSubmit = handleSubmit((values) => {
   createFile(values)
 })
 
 onMounted(() => {
+  if (props.client) {
+    setFieldValue('client', props.client)
+  } else  {
+    setFieldValue('client', route.query.id)
+  }
   if (props.file) {
     setFieldValue('file', props.file)
   }
+  if (props.updatefile) {
+    setFieldValue('name', props.updatefile.name)
+    setFieldValue('description', props.updatefile.description)
+    setFieldValue('key_words', props.updatefile.key_words)
+    setFieldValue('client', props.updatefile.client)
+  }
+
 })
 </script>
 <template>
@@ -77,15 +120,14 @@ onMounted(() => {
         v-model="key_words"
         :error="errors.key_words"
       />
-      <!-- <inputComponent
-        v-if="!props.file"
-        label="Arquivo"
-        placeholder="Selecione o arquivo"
-        type="file"
-        :value="props.file"
-        v-model="file"
-        :error="errors.file"
-      /> -->
+      <SelectComponent
+        v-model="client"
+        label="Cliente"
+        placeholder="Selecione..."
+        :options="clientsOptions"
+        :error="errors.client"
+        v-if="ask_client"
+      ></SelectComponent>
       <div class="button-wrapper">
         <button>Salvar Documento</button>
         <button class="btn-danger" type="button" @click="closeModal">Cancelar</button>

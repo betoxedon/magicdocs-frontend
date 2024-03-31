@@ -6,8 +6,11 @@ import ClientsView from '../views/ClientsView.vue'
 import ClientPageView from '../views/ClientPageView.vue'
 import ClientFormView from '../views/ClientFormView.vue'
 import DocumentView from '../views/DocumentView.vue'
-
+import DocumentListView from '../views/DocumentListView.vue'
 import HomeView from '../assets/views_old/HomeView.vue'
+import TemplateView from '../views/TemplateView.vue'
+import DocumentModelCreate from '../views/DocumentModelCreate.vue'
+import DocumentFromModelCreate from '../views/DocumentFromModelCreate.vue'
 // import LoginView from '../assets/views/LoginView.vue'
 // import RegisterView from '../assets/views/RegisterView.vue'
 // import DocumenView from '../assets/views/DocumentView.vue'
@@ -57,6 +60,26 @@ const router = createRouter({
       path: '/document/',
       name: 'DocumentView',
       component: DocumentView
+    },
+    {
+      path: '/documentsList/',
+      name: 'Documentos',
+      component: DocumentListView
+    },
+    {
+      path: '/modelos/',
+      name: 'Modelos',
+      component: TemplateView
+    },
+    {
+      path: '/criar-modelo/',
+      name: 'NovoModelo',
+      component: DocumentModelCreate
+    },
+    {
+      path: '/criar-documento/',
+      name: 'NovoDocumento',
+      component: DocumentFromModelCreate
     }
   ]
 })

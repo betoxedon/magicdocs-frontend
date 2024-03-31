@@ -10,6 +10,19 @@ const toast = useToast()
 
 
 export const useDocumentStore = defineStore('document', ()=>{
+
+    const documents = ref([])
+
+    async function getAllFiles(payload = null) {
+        pads.value = await apiAuth.api.get('/files/', { params: { q: payload } }).then((res) => {
+            documents.value = res.data.results
+        return res.data.results
+        })
+    }
+
+
+    // O que estiver daqui para baixo deve ser substituído
+
     const pads = ref([])
     const padFromModel = ref([])
     const padTemplate = ref({
@@ -68,5 +81,20 @@ export const useDocumentStore = defineStore('document', ()=>{
     function handlePromptResponse(prompt, response){
         pad.value.content = pad.value.content.replace(prompt, response)
     }
-    return { getPads, pads, padDetail, deletePad, createPad, updatePad, getPadToDoc, pad, loadNewPad, handlePromptResponse, padFromModel }
+    return {
+      getPads,
+      pads,
+      padDetail,
+      deletePad,
+      createPad,
+      updatePad,
+      getPadToDoc,
+      pad,
+      loadNewPad,
+      handlePromptResponse,
+      padFromModel,
+      // manter apenas daqui para baixo
+      getAllFiles,
+      documents
+    }
 })

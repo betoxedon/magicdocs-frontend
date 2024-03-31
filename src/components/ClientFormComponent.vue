@@ -241,7 +241,7 @@ async function pesquisaCEP(valor) {
         <button
           class="btn-danger"
           type="button"
-          @click="router.push({ name: 'ClientPage', query: { id: route.query.id } })"
+          @click="router.push({ name: 'Clientes' })"
         >
           Cancelar
         </button>

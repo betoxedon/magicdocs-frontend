@@ -4,15 +4,15 @@ import ClientCard from '../components/ClientCard.vue'
 import { onMounted, ref } from 'vue'
 import { useClientStore } from '../stores/clients'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const { getClients } = useClientStore()
-const clients = ref([])
-const filteredArray = ref(clients.value)
+const { clients } = storeToRefs(useClientStore())
 const searchString = ref('')
 
 onMounted(async () => {
-  filteredArray.value = await getClients()
+  await getClients()
 })
 
 async function handleClientForm() {
@@ -22,6 +22,11 @@ async function handleClientForm() {
 function handleClientData(id) {
   router.push({ name: 'ClientPage', query: { id: id } })
 }
+
+async function handleSearch(){
+  await getClients(searchString.value)
+}
+
 </script>
 
 <template>
@@ -45,7 +50,7 @@ function handleClientData(id) {
       </div>
       <div class="clients-container">
         <ClientCard
-          v-for="(client, index) in filteredArray"
+          v-for="(client, index) in clients"
           :key="index"
           :client="client"
           @click="handleClientData(client.id)"

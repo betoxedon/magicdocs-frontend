@@ -37,10 +37,14 @@ const itemsArray = [
     name: 'Clientes',
     function: null
   },
-  // {
-  //   name: 'Documentos',
-  //   function: null
-  // },
+  {
+    name: 'Documentos',
+    function: null
+  },
+  {
+    name: 'Modelos',
+    function: null
+  },
   // {
   //   name: 'Financeiro',
   //   function: null
@@ -80,7 +84,7 @@ const itemsArray = [
           >
             $ {{ user.credits }} <span>Créditos</span>
           </span>
-          <span class="credits" :class="{ 'no-credits': user.credits === 0 }" v-else="user.credits > 10">
+          <span class="credits" :class="{ 'no-credits': user.credits === 0 }" v-else-if="user.credits > 10">
             $ {{ user.credits }} <span>Créditos</span>
           </span>
           <span class="username">Olá, {{ user.first_name }}</span>

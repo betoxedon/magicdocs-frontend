@@ -1,8 +1,16 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia';
+import { useClientStore } from '../stores/clients';
+
+const {clients} = storeToRefs(useClientStore())
+
 const props = defineProps({
   file: {
     type: Object
+  },
+  client: {
+    type: Boolean
   }
 })
 
@@ -10,15 +18,21 @@ const router = useRouter()
 function handleRouting() {
   router.push({ name: 'DocumentView', query: { id: props.file.id } })
 }
+
+function getClientName(id){
+  return clients.value.filter(item=> item.id === id).map(item=> item.name)[0]
+}
+
 </script>
 <template>
-  <div class="card-container" @click.capture="handleRouting">
+  <div class="card-container" @click.capture="handleRouting" v-if="file.type != 'image/jpeg'">
     <div class="card-title">
       <font-awesome-icon icon="file-word" size="xl" v-if="props.file.type == 'doc'" />
       <font-awesome-icon icon="image" size="xl" v-else-if="props.file.type == 'image/jpeg'" />
       <font-awesome-icon icon="file-pdf" size="xl" v-else />
-      <span>{{ props.file.name }}</span>
+      <span>{{ props.file.name }}</span> <div class="card-client-name" v-if="client">{{ getClientName(props.file.client)}}</div>
     </div>
+    
     <div class="card-description">{{ props.file.description }}</div>
     <div class="card-footer">
       <span v-for="(keyword, index) in props.file.key_words.split(',')" :key="index">{{ keyword }}</span>
@@ -74,5 +88,13 @@ function handleRouting() {
   color: var(--color-white-fonts);
   background-color: var(--color-label-primary);
   border-radius: 10px;
+}
+
+.card-client-name {
+  padding: .5rem;
+  border-radius: 4px;
+  background-color: var(--color-success);
+  color: var(--color-white);
+  width: fit-content  ;
 }
 </style>

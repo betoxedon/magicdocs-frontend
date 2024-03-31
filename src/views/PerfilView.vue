@@ -9,6 +9,8 @@ import SelectComponent from '../components/SelectComponent.vue'
 import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const { user } = storeToRefs(useUserStore())
 const { getUserData, updateUser } = useUserStore()
@@ -125,6 +127,9 @@ const onSubmit = handleSubmit((values) => {
   values.postal_code = values.postal_code.replaceAll('.', '').replaceAll('-', '')
   let formData = new FormData()
   formData = { ...values }
+  if (formData.profile_picture === userData.value.profile_picture) {
+    formData.delete('profile_picture')
+  }
   updateUser(formData)
   getUserData()
 })
@@ -297,7 +302,7 @@ function handleFile(value) {
         <div class="separator" style="margin-top: 1rem"></div>
         <div class="section row">
           <button class="btn-primary">Atualizar Dados</button>
-          <button class="btn-danger" type="button">Cancelar</button>
+          <button class="btn-danger" type="button" @click="router.push({name: 'Home'})">Cancelar</button>
         </div>
       </div>
     </div>

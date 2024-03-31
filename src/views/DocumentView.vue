@@ -2,10 +2,14 @@
 import { useFileStore } from '../stores/files'
 const { getSingleFile, updateDocFile } = useFileStore()
 import { onMounted, ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import chatComponent from '../components/ChatComponent.vue'
+import { openModal } from 'jenesius-vue-modal';
+import FileFormModal from '../components/fileFormModal.vue';
+import deleteFileFormModal from '../components/deleteFileFormModal.vue';
 const file = ref({})
 const route = useRoute()
+const router = useRouter()
 
 onMounted(async () => {
   let res = await getSingleFile(route.query.id)
@@ -19,16 +23,27 @@ function saveData() {
 function handleImport(e) {
   file.value.content += `\n${e}`
 }
+
+function handleBack(){
+  router.push({name: 'Documentos'})
+}
 </script>
 
 <template>
   <div class="document-container">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; gap: 1rem;">
+      <div style="display: flex; gap: 1rem;">
+        <button @click="handleBack">Voltar</button>
+        <button @click="openModal(FileFormModal, {updatefile: file, ask_client: true})" >Editar Informações</button>
+      </div>
+      <button class="btn-danger" @click="openModal(deleteFileFormModal, {file: file})">Apagar Documento</button>
+    </div>
     <embed
       :src="file.file"
       :class="{ pdf: file.type === 'aplication/pdf', img: file.type === 'image/jpeg' }"
-      v-if="file.type != 'doc'"
+      v-if="file.type === 'application/pdf'"
     />
-    <div class="editor-container">
+    <div class="editor-container" v-else-if="file.type === 'doc'">
       <TinyEditor
         api-key="229tbl1echk2xkfmrk0brqszsiq67qrll6jr3hbxhmpj8xj3"
         v-model="file.content"
@@ -46,6 +61,7 @@ function handleImport(e) {
           tinycomments_mode: 'embedded',
           tinycomments_author: 'Author name',
           height: '80vh',
+          width: '100%',
           save_onsavecallback: () => {
             saveData()
           }
@@ -79,6 +95,6 @@ embed {
 
 .editor-container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 </style>
