@@ -33,6 +33,9 @@ function handleCopy() {
   box-sizing: border-box;
   width: 100%;
   display: flex;
+  height: fit-content;
+  flex-basis: content;
+  
 }
 
 .user,

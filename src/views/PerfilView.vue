@@ -127,8 +127,9 @@ const onSubmit = handleSubmit((values) => {
   values.postal_code = values.postal_code.replaceAll('.', '').replaceAll('-', '')
   let formData = new FormData()
   formData = { ...values }
+  console.log(typeof formData)
   if (formData.profile_picture === userData.value.profile_picture) {
-    formData.delete('profile_picture')
+    delete formData['profile_picture']
   }
   updateUser(formData)
   getUserData()

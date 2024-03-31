@@ -113,15 +113,15 @@ function openBot() {
           @copy="handleCopy"
           @import="(e) => emits('import', e)"
         />
-        <font-awesome-icon icon="gear" spin class="loading" v-if="loading" />
       </div>
       <div class="bot-request">
-        <div class="request-navigation">
-          <select name="" id="" v-model="selectedPrompt">
+        <div class="request-navigation" style="position: relative;">
+          <select name="" id="" v-model="selectedPrompt" >
             <option v-for="(prompt, index) in prompts" :key="index" :value="prompt.id" :selected="prompt.default">
               {{ prompt.name }}
             </option>
           </select>
+          <font-awesome-icon icon="gear" spin class="loading" v-if="loading" />
         </div>
         <textarea
           type="text"
@@ -240,7 +240,6 @@ function openBot() {
 .loading {
   position: absolute;
   right: 1rem;
-  bottom: 0.5rem;
 }
 
 .bot-bubble {
