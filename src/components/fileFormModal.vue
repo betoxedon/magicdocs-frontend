@@ -58,7 +58,11 @@ async function createFile(values) {
     getFiles()
     closeModal()
     toast.success('Arquivo salvo com sucesso.')
-    router.push({name: "DocumentView", query: {id: res.data.id}})
+    if (['doc', 'application/pdf'].includes(payload.type)) {
+      router.push({name: "DocumentView", query: {id: res.data.id}})
+    } else  {
+      router.push({name: "ClientPage", query: {id: route.query.id}})
+    }
   } else {
     toast.warning('Houve um erro ao salvar seus arquivos. Tente novamente.')
   }
