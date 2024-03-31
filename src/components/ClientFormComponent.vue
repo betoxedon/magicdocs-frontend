@@ -110,8 +110,8 @@ const onSubmit = handleSubmit(async (values) => {
       toast.success('Cliente atualizado com sucesso!')
     } else {
       toast.success('Cliente cadastrado com sucesso!')
+      router.push({ name: 'Clientes' })
     }
-    router.push({ name: 'ClientPage', query: { id: route.query.id } })
   } else {
     toast.warning('Ocorreu um erro, tente novamente!')
   }
