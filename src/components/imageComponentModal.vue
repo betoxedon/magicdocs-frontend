@@ -15,7 +15,7 @@ const props = defineProps({
             <button class="btn" @click="closeModal">Fechar</button>
             <button class="btn-danger" @click="openModal(deleteFileFormModal, {file: file})">Apagar imagem</button>
         </div>
-        <img :src="props.file.file" alt="" @click="closeModal">
+        <img :src="props.file.url" alt="" @click="closeModal">
     </div>
 </template>
 

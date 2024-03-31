@@ -118,7 +118,7 @@ function handleNewDocument() {
         <div class="documentos" v-if="images.length">
           <h3 >Imagens:</h3>
           <div class="images">
-            <img v-for="(img, index) in images" :key="index" :src="img.file" alt="" @click="openModal(imageComponentModal, {file: img})">
+            <img v-for="(img, index) in images" :key="index" :src="img.url" alt="" @click="openModal(imageComponentModal, {file: img})">
           </div>
         </div>
         <div
