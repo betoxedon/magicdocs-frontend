@@ -1,86 +1,151 @@
 <script setup>
-import { useDocumentoModelStore } from '../stores/documentModels'; 
+import ContextMenu from '../components/ContextMenu.vue'
+import AccordionGroup from '../components/AccordionGroup.vue'
+import AccordionItem from '../components/AccordionItem.vue'
+import { useDocumentoModelStore } from '../stores/documentModels'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import chatComponent from '../components/ChatComponent.vue'
-import ModelField from '../components/ModelField.vue';
+import ModelField from '../components/ModelField.vue'
 import { useToast } from 'vue-toastification'
-import { useClientStore } from '../stores/clients';
-import { storeToRefs } from 'pinia';
-import InputComponent from '../components/InputComponent.vue';
+import { useClientStore } from '../stores/clients'
+import { storeToRefs } from 'pinia'
+import InputComponent from '../components/InputComponent.vue'
 
-const {createModel} = useDocumentoModelStore()
+const route = useRoute()
+const update = ref(false) 
+onMounted(async ()=> {
+  if (route.query.id) {
+    let instance = await getModelInstance(route.query.id)
+    console.log(instance)
+    setFieldValue('name', instance.name)
+    setFieldValue('description', instance.description)
+    file.value = instance.text
+    update.value = true
+    usedFields.value = instance.fields.split(", ")
+    newFields.value = usedFields.value.filter(item => !fields.value.includes(item))
+  }
+})
+
+const { createModel, getModelInstance, updateModel } = useDocumentoModelStore()
 const toast = useToast()
-const { getClientFields } = useClientStore()
-const {fields} = storeToRefs(useClientStore())
+const { fields } = storeToRefs(useClientStore())
 
-
-const file = ref({})
+const file = ref('')
 const newField = ref('')
+const newFields = ref([])
 const usedFields = ref([])
 
 const router = useRouter()
 
-onMounted(async () => {
-  await getClientFields()
-})
 
 function handleImport(e) {
-  file.value.text += `\n${e}`
+  file.value += `\n ${e}`
 }
 
-function handleNewField(value){
-  fields.value.push(value)
+function handleNewField(value) {
+  console.log(value)
+  newFields.value.push(value)
+  console.log(newFields.value)
   newField.value = ''
 }
 
-function handleDrop(value){
-  if (!usedFields.value.includes(value)){
+function handleDrop(value) {
+  if (!usedFields.value.includes(value)) {
     usedFields.value.push(value)
   }
 }
+
+function handleRemove(value) {
+  for (let index = 0; index < newFields.value.length; index++) {
+    if (newFields.value[index] === value) {
+      newFields.value.splice(index, 1)
+    }
+  
+  }
+}
+
 
 // FORM
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 
 const schema = yup.object({
-  name: yup.string().required("Este campo é obrigatório!"),
+  name: yup.string().required('Este campo é obrigatório!'),
   text: yup.string(),
-  description: yup.string(),
-  fields: yup.string(),
+  description: yup.string().required('Este campo é obrigatório!'),
+  fields: yup.string()
 })
-const { errors, defineField, handleSubmit } = useForm({
+const { errors, defineField, handleSubmit, values, setFieldValue } = useForm({
   validationSchema: schema
 })
 const [name] = defineField('name')
 const [text] = defineField('text')
 const [description] = defineField('description')
 const [modelFields] = defineField('fields')
+const [published] = defineField('published')
 
 const onSubmit = handleSubmit(async (values) => {
-
   let payload = {
     name: values.name,
-    text: values.text,
-    fields: usedFields.value.toString().replace(',', ', ')
+    text: file.value,
+    description: values.description,
+    fields: usedFields.value.toString().replace(',', ', '),
+    published: values.published
   }
 
-  let res = await createModel(payload)
+  let res
+  if (update.value) {
+    res = await updateModel(payload, route.query.id)
+  } else {
+    res = await createModel(payload)
+    
+  }
   if (res) {
     toast.success('Modelo criado com sucesso!')
-    router.push({name: "Modelos"})
+    router.push({ name: 'Modelos' })
   } else {
-    toast.success('Houve um erro ao cadastrar o usuário.')
+    toast.success('Houve um erro ao efetuar sua solicitação.')
   }
 })
+
+// function handleContextMenu(e){
+//   let selectedText = tinymce.value.getEditor().selection.getContent()
+//   if (selectedText.length>0) {
+//     e.preventDefault()
+//     let x = e.x + 45
+//     let y = e.y + 45
+//     let node = tinymce.value.getEditor().selection.getSel()
+//     contextmenu.value.defineCoordinates(x, y)
+//     contextmenu.value.showMenu()
+//     contextmenu.value.defineText(selectedText)
+//     node.anchorNode.data.replace(selectedText, "teste")
+//     console.log(selectedText)
+//   }
+// }
+
+const tinymce = ref(null)
+// const contextmenu = ref(null)
+async function handle_draft(){
+  setFieldValue('published', false)
+  onSubmit()
+}
+
+async function handle_save(){
+  setFieldValue('published', true)
+  onSubmit()
+}
+
 </script>
 
 <template>
   <div class="document-container">
+    <!-- <ContextMenu ref="contextmenu" @handleAssistant="handleAssistPrompt"></ContextMenu> -->
+    <div class="tiny-container" >
       <TinyEditor
-        api-key="229tbl1echk2xkfmrk0brqszsiq67qrll6jr3hbxhmpj8xj3"
-        v-model="text"
+        ref="tinymce"
+        api-key="v9fj6n0ekkc992gxnfzqjo6vzwe0zucj30bcg30ca6bfgziz"
+        v-model="file"
         :init="{
           language: 'pt_BR',
           toolbar_mode: 'sliding',
@@ -96,44 +161,70 @@ const onSubmit = handleSubmit(async (values) => {
           tinycomments_author: 'Author name',
           height: '80vh',
           width: '100%',
+          contextmenu: false,
           save_onsavecallback: () => {
             saveData()
-          }
+          },
         }"
       />
-      <form novalidate @submit.prevent="onSubmit"  class="side-menu">
-        <div>
-          <span>Dados do Template:</span>
-          <InputComponent label="Título" v-model="name" placeholder="Nome do modelo" :error="errors.name"/>
-        </div>
-        <div>
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem;">
-            <InputComponent label="Adicionar Campos" v-model="newField" placeholder="Nome do campo" />
-            <button type="button" style="align-self: end;" @click="handleNewField(newField)">+</button>
-          </div>
-        </div>
-        <div class="campos">
-          <ModelField v-for="(field, index) in fields" :key="index" :field="field" @drop="(e)=>handleDrop(e)"/>
-        </div>
-        <span>Ações:</span>
-        <div style="display: flex; gap: 1rem;">
-            <button>Salvar</button>
-            <button type="button" class="btn-danger">Cancelar</button>
-          </div>
-      </form>
-      <chatComponent @import="(e) => handleImport(e)"></chatComponent>
+
     </div>
+    <form novalidate @submit.prevent="onSubmit" class="side-menu">
+      <div style="display: flex; flex-direction: column; align-items: stretch; gap: 1rem">
+        <button class="full-width-button" type="button" @click="handle_save">Salvar</button>
+        <button class="full-width-button" type="button" @click="handle_draft">Salvar Rascunho</button>
+        <button class="full-width-button btn-danger" type="button">Cancelar</button>
+      </div>
+      <AccordionGroup>
+        <AccordionItem title="Dados do Documento">
+          <InputComponent
+            label="Título do Modelo"
+            v-model="name"
+            placeholder="Escreva aqui o título que deseja para o documento"
+            :error="errors.name"
+          />
+          <InputComponent
+            label="Descrição"
+            v-model="description"
+            placeholder="Faça uma breve descrição do modelo"
+            :error="errors.description"
+          />
+        </AccordionItem>
+        <AccordionItem title="Campos Padrão">
+          <div class="campos">
+            <ModelField v-for="(field, index) in fields" :key="index" :field="field" @drop="(e) => handleDrop(e)" />
+          </div>
+        </AccordionItem>
+        <AccordionItem title="Campos Personalizados">
+          <div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem">
+              <InputComponent label="Adicionar Campos" v-model="newField" placeholder="Nome do campo" />
+              <button type="button" style="align-self: end" @click="handleNewField(newField)">+</button>
+            </div>
+          </div>
+          <div class="campos">
+            <ModelField v-for="(field, index) in newFields" :key="index" :field="field" @drop="(e) => handleDrop(e)" @remove="(e)=>handleRemove(e)"  />
+              {{ newFields.value }}
+          </div>
+        </AccordionItem>
+      </AccordionGroup>
+
+    </form>
+    <chatComponent @import="(e) => handleImport(e)"></chatComponent>
+  </div>
 </template>
 
 <style scoped>
-
-
 .document-container {
   width: 100%;
   min-height: 80vh;
   max-width: 1320px;
   display: flex;
-  flex-direction: row;
+  box-sizing: border-box;
+}
+.tiny-container {
+  flex-shrink: 1;
+  width: calc(100% - 350px);
 }
 
 .side-menu {
@@ -142,18 +233,22 @@ const onSubmit = handleSubmit(async (values) => {
   padding: 1rem;
   box-sizing: border-box;
   gap: 1rem;
+  max-height: 80vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 300px;
 }
 
 .campos {
-  max-width: 300px;
-  height: 100%;
+  max-width: 100%;
+  height: fit-content;
   overflow-y: auto;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: .5rem;
+  gap: 0.5rem;
+  padding: 1rem 0rem;
 }
-
 
 embed {
   width: 100%;
@@ -170,5 +265,9 @@ embed {
 .editor-container {
   display: flex;
   justify-content: space-around;
+}
+
+.full-width-button {
+  width: 100%;
 }
 </style>

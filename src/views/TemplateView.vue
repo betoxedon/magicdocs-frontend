@@ -19,9 +19,6 @@ async function handleSearch(){
     await documentStore.getModels(seachString.value)
 }
 
-function handleModelRouting(id){
-    router.push({name: 'NovoDocumento', query: {id:id}})
-}
 
 </script>
 
@@ -38,7 +35,7 @@ function handleModelRouting(id){
             Você ainda não possui modelos cadastrados. Cadastre um novo modelo e facilite a emissão de documentos para seus clientes!
         </div>
         <div class="document-container" v-else>
-            <DocumentModelItemList v-for="(model, index) in models.results" :key="index" :model="model" client @click="handleModelRouting(model.id)"/>
+            <DocumentModelItemList v-for="(model, index) in models.results" :key="index" :model="model" client/>
         </div>
 
     </div>

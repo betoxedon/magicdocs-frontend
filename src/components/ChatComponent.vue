@@ -26,9 +26,12 @@ onMounted(async () => {
   prompts.value = await getPrompts().then((res) => {
     return res.data.results
   })
+  console.log(seletor.value)
 })
 
 const request = ref('')
+const seletor = ref(null)
+
 
 async function handleRequest() {
   if (selectedPrompt.value === null) {
@@ -90,7 +93,10 @@ function closeBot() {
 
 function openBot() {
   botHidden.value = false
+  selectedPrompt.value = prompts.value.filter(item => item.default ===true)[0].id
+  console.log(selectedPrompt.value)
 }
+
 </script>
 
 <template>
@@ -116,7 +122,7 @@ function openBot() {
       </div>
       <div class="bot-request">
         <div class="request-navigation" style="position: relative;">
-          <select name="" id="" v-model="selectedPrompt" >
+          <select name="" id="" v-model="selectedPrompt" ref="seletor" @input="(e)=>{console.log(selectedPrompt)}">
             <option v-for="(prompt, index) in prompts" :key="index" :value="prompt.id" :selected="prompt.default">
               {{ prompt.name }}
             </option>

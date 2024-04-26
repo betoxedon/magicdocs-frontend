@@ -77,6 +77,11 @@ const router = createRouter({
       component: DocumentModelCreate
     },
     {
+      path: '/editar-modelo/',
+      name: 'EditarModelo',
+      component: DocumentModelCreate
+    },
+    {
       path: '/criar-documento/',
       name: 'NovoDocumento',
       component: DocumentFromModelCreate

@@ -2,10 +2,14 @@
 const props = defineProps({
     field: {
         type: String
+    },
+    newField: {
+        type: Boolean,
+        default: false
     }
 })
 
-const emits = defineEmits(['drop'])
+const emits = defineEmits(['drop', 'remove'])
 
 const campos = {
     name: "Nome",
@@ -42,7 +46,7 @@ function dragstart_handler(event, value){
     <div class="field" v-if="campos.hasOwnProperty(field)" draggable="true" @dragstart="(e)=>dragstart_handler(e, field)" @drop="(e)=>drop_handler(e)">
         {{ campos[`${field}`] }}
     </div>
-    <div v-else-if="field!='is_active'" class="field" draggable="true" @dragstart="(e)=>dragstart_handler(e, field)" @drop="(e)=>drop_handler(e)">{{ field }}</div>
+    <div v-else-if="field!='is_active' && field!='id'" class="field " draggable="true" @dragstart="(e)=>dragstart_handler(e, field)" @drop="(e)=>drop_handler(e)">{{ field }} <font-awesome-icon class="icon" icon="xmark" @click="emits('remove', field)"/></div>
 </template>
 
 <style scoped>
@@ -53,5 +57,10 @@ function dragstart_handler(event, value){
     cursor: grab;
     border-radius: 4px;
     height: fit-content;
+    filter: drop-shadow(4px 4px 2px #000000);
+}
+
+.icon {
+    cursor: pointer;
 }
 </style>

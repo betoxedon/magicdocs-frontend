@@ -6,7 +6,7 @@ const toast = useToast()
 
 api.interceptors.request.use(async (config) => {
   if (parseInt(sessionStorage.getItem('expiration')) < Date.now()) {
-    refresh()
+    await refresh()
   }
   const access = sessionStorage.getItem('access')
   config.baseURL = `/api`

@@ -35,7 +35,9 @@ export const useDocumentoModelStore = defineStore('model', ()=>{
     async function getModelInstance(id) {
           let url = `/model/${id}/`
           model.value = (await apiAuth.api.get(url)).data
+            return model.value
         }
+        
 
     async function createModel(payload) {
         let res = await apiAuth.api.post(`/model/`, payload)
@@ -46,5 +48,14 @@ export const useDocumentoModelStore = defineStore('model', ()=>{
         return false
     }
 
-    return { models, getModels, createModel, getModelInstance, model, campos }
+    async function updateModel(payload, id) {
+        let res = await apiAuth.api.patch(`/model/${id}/`, payload)
+        if (res.status === 200) {
+            getModels()
+            return true
+        }
+        return false
+    }
+
+    return { models, getModels, createModel, getModelInstance, model, campos, updateModel }
 })

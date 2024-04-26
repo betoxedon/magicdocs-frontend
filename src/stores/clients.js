@@ -7,7 +7,9 @@ const toast = useToast()
 export const useClientStore = defineStore('clients', () => {
   const clients = ref([])
   const client = ref({})
-  const fields = ref([])
+  const fields = ref([
+    'name', 'email', 'sex', 'cpf', 'rg', 'phone_number', 'postal_code', 'adress', 'neighborhood', 'city', 'state', 'number', 'causa', 'birth_date'
+  ])
   
   async function getClients(q=null) {
     let url = `/clients/`
@@ -64,11 +66,6 @@ export const useClientStore = defineStore('clients', () => {
     }
   }
 
-  async function getClientFields(){
-    await getClients()
-    
-    fields.value = Object.keys(clients.value[0])
-  }
 
-  return { getClients, createClient, updateClient, deleteClient, getClientData, clients, getClientFields, fields, client }
+  return { getClients, createClient, updateClient, deleteClient, getClientData, clients, fields, client }
 })
